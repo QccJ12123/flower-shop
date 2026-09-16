@@ -5,11 +5,14 @@
 > PC端、移动端响应式适配
 
 ## 📷 页面截图
-> 部署成功后，在这里粘贴截图链接
 - 首页
+- <img width="2930" height="1751" alt="image" src="https://github.com/user-attachments/assets/6ed0f08c-b8b3-46a0-a0de-f161a2baf863" />
 - 花卉分类页
+- <img width="2963" height="1737" alt="image" src="https://github.com/user-attachments/assets/a48e022a-9300-416c-84bf-60c700c9a783" />
 - 商品详情页
+- <img width="2946" height="1757" alt="image" src="https://github.com/user-attachments/assets/70a8e991-53af-4135-9da6-b710a240c0ed" />
 - 购物车页面
+- <img width="2927" height="1737" alt="image" src="https://github.com/user-attachments/assets/2eb0817f-1662-44bc-bcdb-405289e43b95" />
 
 ## ✨ 项目简介
 本项目是基于 **HTML5 + CSS3 + JavaScript + Vue 2.6（CDN引入）** 开发的多页面静态花卉模拟电商网站，为前端课程设计作品。
