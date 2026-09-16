@@ -1,0 +1,1896 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>结账 - 花卉百科</title>
+    <!-- 添加基础样式 -->
+    <style>
+        /* 基础重置 */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #f8f9fa; color: #333; }
+        
+        /* 导航栏基础样式 */
+        .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); padding: 15px 0; }
+        .navbar .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+        .nav-brand h1 { color: #2d5016; font-size: 1.8rem; }
+        .nav-menu { display: flex; list-style: none; align-items: center; gap: 25px; }
+        .nav-menu a { text-decoration: none; color: #2d5016; padding: 8px 15px; border-radius: 6px; }
+        .nav-menu a:hover { background: #e8f5e9; }
+        
+        /* 页脚基础样式 */
+        .footer { background: #2d5016; color: white; padding: 20px 0; margin-top: 40px; }
+        .footer .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; }
+        .social-links a { color: white; margin-left: 15px; }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 结账页面样式 - 原代码保持不变 */
+        .checkout-page {
+            padding: 40px 0;
+            min-height: 70vh;
+            background: #f8f9fa;
+        }
+        
+        .checkout-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .checkout-steps {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .checkout-steps::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 50px;
+            right: 50px;
+            height: 2px;
+            background: #ddd;
+            z-index: 1;
+        }
+        
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            max-width: 200px;
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #ddd;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+        
+        .step.active .step-number {
+            background: #27ae60;
+            transform: scale(1.1);
+        }
+        
+        .step.completed .step-number {
+            background: #2ecc71;
+        }
+        
+        .step-label {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            text-align: center;
+        }
+        
+        .step.active .step-label {
+            color: #2d5016;
+            font-weight: bold;
+        }
+        
+        .checkout-content {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+        }
+        
+        @media (max-width: 992px) {
+            .checkout-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* 表单区域 */
+        .checkout-form {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .form-section h3 {
+            color: #2d5016;
+            margin: 0 0 20px 0;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-section h3 i {
+            color: #27ae60;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        .form-group label.required::after {
+            content: ' *';
+            color: #e74c3c;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #27ae60;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+        }
+        
+        .form-group input.error,
+        .form-group select.error,
+        .form-group textarea.error {
+            border-color: #e74c3c;
+        }
+        
+        /* 支付方式 */
+        .payment-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .payment-method {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+        }
+        
+        .payment-method:hover {
+            border-color: #ddd;
+            transform: translateY(-2px);
+        }
+        
+        .payment-method.selected {
+            border-color: #27ae60;
+            background: #f0f9f4;
+            box-shadow: 0 4px 8px rgba(39, 174, 96, 0.1);
+        }
+        
+        .payment-icon {
+            font-size: 1.8rem;
+            margin-right: 15px;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .payment-icon.alipay {
+            color: #00a0e9;
+            background: #f0f9ff;
+        }
+        
+        .payment-icon.wechat {
+            color: #07c160;
+            background: #f0fff4;
+        }
+        
+        .payment-icon.credit {
+            color: #2d5016;
+            background: #f8f9fa;
+        }
+        
+        .payment-info {
+            flex: 1;
+        }
+        
+        .payment-info h4 {
+            margin: 0 0 5px 0;
+            color: #2d5016;
+        }
+        
+        .payment-info p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+        
+        /* 二维码展示 */
+        .qrcode-container {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+        
+        .qrcode-placeholder {
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .qrcode-image {
+            width: 160px;
+            height: 160px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .qrcode-placeholder i {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        .qrcode-placeholder .alipay i {
+            color: #00a0e9;
+        }
+        
+        .qrcode-placeholder .wechat i {
+            color: #07c160;
+        }
+        
+        /* 虚拟支付提示 */
+        .virtual-payment-notice {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .virtual-payment-notice i {
+            color: #f39c12;
+        }
+        
+        /* 信用卡表单 */
+        .credit-card-form {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .card-preview {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #2c3e50 0%, #4a6491 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .card-chip {
+            width: 40px;
+            height: 30px;
+            background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%);
+            border-radius: 5px;
+            margin-right: 20px;
+        }
+        
+        .card-number-preview {
+            flex: 1;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+        }
+        
+        .card-expiry-preview {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        /* 订单汇总 */
+        .order-summary {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            align-self: start;
+            position: sticky;
+            top: 20px;
+        }
+        
+        .order-items {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding-right: 10px;
+        }
+        
+        .order-items::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .order-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        
+        .order-items::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+        
+        .order-items::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        
+        .order-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+            transition: background 0.3s;
+        }
+        
+        .order-item:hover {
+            background: #f9f9f9;
+        }
+        
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        
+        .order-item-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .order-item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .order-item-info {
+            flex: 1;
+        }
+        
+        .order-item-info h5 {
+            margin: 0 0 5px 0;
+            font-size: 0.9rem;
+            color: #2d5016;
+        }
+        
+        .order-item-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+        
+        .order-item-price {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        
+        .order-summary-details {
+            margin: 25px 0;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            color: #2c3e50;
+        }
+        
+        .summary-row.total {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #2d5016;
+            padding-top: 15px;
+            margin-top: 15px;
+            border-top: 2px solid #eee;
+        }
+        
+        .summary-row.discount {
+            color: #27ae60;
+        }
+        
+        .delivery-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .delivery-info p {
+            margin: 5px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .delivery-info i {
+            color: #27ae60;
+        }
+        
+        /* 按钮 */
+        .checkout-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .btn-back {
+            padding: 12px 25px;
+            background: #95a5a6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-back:hover {
+            background: #7f8c8d;
+            transform: translateX(-5px);
+        }
+        
+        .btn-submit {
+            padding: 14px 35px;
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(39, 174, 96, 0.4);
+        }
+        
+        .btn-submit:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* 错误提示 */
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        /* 成功页面 */
+        .success-page {
+            text-align: center;
+            padding: 60px 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .success-icon {
+            font-size: 80px;
+            color: #27ae60;
+            margin-bottom: 20px;
+            animation: bounce 1s infinite alternate;
+        }
+        
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
+        }
+        
+        .success-message h2 {
+            color: #2d5016;
+            margin-bottom: 15px;
+        }
+        
+        .order-number {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            font-size: 1.4rem;
+            color: #2c3e50;
+            border: 2px dashed #27ae60;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+        
+        .order-details {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            text-align: left;
+        }
+        
+        .order-detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .order-detail-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .success-actions {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn-track {
+            padding: 12px 30px;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .btn-track:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn-home {
+            padding: 12px 30px;
+            background: #2d5016;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .btn-home:hover {
+            background: #1e3a0f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(45, 80, 22, 0.3);
+        }
+        
+        .btn-print {
+            padding: 12px 30px;
+            background: #9b59b6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .btn-print:hover {
+            background: #8e44ad;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(155, 89, 182, 0.3);
+        }
+        
+        /* 加载动画 */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #27ae60;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 购物车图标样式 */
+        .cart-icon-container {
+            position: relative;
+            margin-left: 20px;
+        }
+        
+        .cart-icon {
+            color: #2d5016;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .cart-icon:hover {
+            color: #27ae60;
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #e74c3c;
+            color: white;
+            font-size: 0.8rem;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+            display: none;
+        }
+        
+        /* 表单帮助文本 */
+        .form-help {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>花卉百科</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="categories.html">花卉分类</a></li>
+                <li><a href="care-guide.html">养护指南</a></li>
+                <li><a href="about.html">关于我们</a></li>
+                <li><a href="login.html">个人中心</a></li>
+                <!-- 购物车图标 -->
+                <li class="cart-icon-container" id="navCart">
+                    <a href="cart.html" class="cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 结账内容 -->
+    <section class="checkout-page">
+        <div class="checkout-container">
+            <!-- 订单成功页面 -->
+            <div id="successPage" style="display: none;" class="success-page">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="success-message">
+                    <h2><i class="fas fa-trophy"></i> 订单提交成功！</h2>
+                    <p>感谢您的购买，我们已收到您的订单</p>
+                    
+                    <div id="orderNumber" class="order-number">
+                        ORD2024122412345678
+                    </div>
+                    
+                    <div class="order-details">
+                        <div class="order-detail-item">
+                            <span>订单时间：</span>
+                            <strong id="orderTime">2024-12-24 12:34</strong>
+                        </div>
+                        <div class="order-detail-item">
+                            <span>订单金额：</span>
+                            <strong id="orderTotal">¥0.00</strong>
+                        </div>
+                        <div class="order-detail-item">
+                            <span>支付方式：</span>
+                            <strong id="paymentMethod">支付宝</strong>
+                        </div>
+                        <div class="order-detail-item">
+                            <span>收货人：</span>
+                            <strong id="shippingName">张三</strong>
+                        </div>
+                        <div class="order-detail-item">
+                            <span>联系电话：</span>
+                            <strong id="shippingPhone">13800138000</strong>
+                        </div>
+                    </div>
+                    
+                    <p><i class="fas fa-envelope"></i> 订单确认邮件已发送至 <span id="shippingEmail">user@example.com</span></p>
+                    <p><i class="fas fa-clock"></i> 预计配送时间：3-5个工作日</p>
+                    <p><i class="fas fa-headset"></i> 如有疑问，请联系客服：400-123-4567</p>
+                    
+                    <div class="success-actions">
+                        <a href="order-detail.html" class="btn-track">
+                            <i class="fas fa-eye"></i> 查看订单详情
+                        </a>
+                        <button class="btn-print" onclick="window.print()">
+                            <i class="fas fa-print"></i> 打印订单
+                        </button>
+                        <a href="index.html" class="btn-home">
+                            <i class="fas fa-home"></i> 返回首页
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 结账流程页面 -->
+            <div id="checkoutForm">
+                <!-- 结账步骤 -->
+                <div class="checkout-steps">
+                    <div class="step" id="step1">
+                        <div class="step-number">1</div>
+                        <div class="step-label">收货信息</div>
+                    </div>
+                    <div class="step" id="step2">
+                        <div class="step-number">2</div>
+                        <div class="step-label">支付方式</div>
+                    </div>
+                    <div class="step" id="step3">
+                        <div class="step-number">3</div>
+                        <div class="step-label">确认订单</div>
+                    </div>
+                </div>
+
+                <div class="checkout-content">
+                    <!-- 左侧表单 -->
+                    <div class="checkout-form">
+                        <!-- 步骤1：收货信息 -->
+                        <div id="step1Form" class="form-section">
+                            <h3><i class="fas fa-shipping-fast"></i> 收货信息</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="firstName" class="required">姓</label>
+                                    <input type="text" id="firstName" placeholder="张">
+                                    <div id="firstNameError" class="error-message" style="display: none;">
+                                        <i class="fas fa-exclamation-circle"></i> 请输入姓
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="lastName" class="required">名</label>
+                                    <input type="text" id="lastName" placeholder="三">
+                                    <div id="lastNameError" class="error-message" style="display: none;">
+                                        <i class="fas fa-exclamation-circle"></i> 请输入名
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="phone" class="required">手机号码</label>
+                                    <input type="tel" id="phone" placeholder="13800138000">
+                                    <div id="phoneError" class="error-message" style="display: none;">
+                                        <i class="fas fa-exclamation-circle"></i> 请输入正确的手机号码
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="email" class="required">电子邮箱</label>
+                                    <input type="email" id="email" placeholder="zhangsan@example.com">
+                                    <div id="emailError" class="error-message" style="display: none;">
+                                        <i class="fas fa-exclamation-circle"></i> 请输入正确的邮箱格式
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="address" class="required">详细地址</label>
+                                <input type="text" id="address" placeholder="北京市朝阳区花卉大道123号">
+                                <div id="addressError" class="error-message" style="display: none;">
+                                    <i class="fas fa-exclamation-circle"></i> 请输入详细地址
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="province" class="required">省份</label>
+                                    <select id="province">
+                                        <option value="">请选择省份</option>
+                                        <option value="北京市">北京市</option>
+                                        <option value="天津市">天津市</option>
+                                        <option value="河北省">河北省</option>
+                                        <option value="山西省">山西省</option>
+                                        <option value="内蒙古自治区">内蒙古自治区</option>
+                                        <option value="辽宁省">辽宁省</option>
+                                        <option value="吉林省">吉林省</option>
+                                        <option value="黑龙江省">黑龙江省</option>
+                                        <option value="上海市">上海市</option>
+                                        <option value="江苏省">江苏省</option>
+                                        <option value="浙江省">浙江省</option>
+                                        <option value="安徽省">安徽省</option>
+                                        <option value="福建省">福建省</option>
+                                        <option value="江西省">江西省</option>
+                                        <option value="山东省">山东省</option>
+                                        <option value="河南省">河南省</option>
+                                        <option value="湖北省">湖北省</option>
+                                        <option value="湖南省">湖南省</option>
+                                        <option value="广东省">广东省</option>
+                                        <option value="广西壮族自治区">广西壮族自治区</option>
+                                        <option value="海南省">海南省</option>
+                                        <option value="重庆市">重庆市</option>
+                                        <option value="四川省">四川省</option>
+                                        <option value="贵州省">贵州省</option>
+                                        <option value="云南省">云南省</option>
+                                        <option value="西藏自治区">西藏自治区</option>
+                                        <option value="陕西省">陕西省</option>
+                                        <option value="甘肃省">甘肃省</option>
+                                        <option value="青海省">青海省</option>
+                                        <option value="宁夏回族自治区">宁夏回族自治区</option>
+                                        <option value="新疆维吾尔自治区">新疆维吾尔自治区</option>
+                                        <option value="香港特别行政区">香港特别行政区</option>
+                                        <option value="澳门特别行政区">澳门特别行政区</option>
+                                        <option value="台湾省">台湾省</option>
+                                    </select>
+                                    <div id="provinceError" class="error-message" style="display: none;">
+                                        <i class="fas fa-exclamation-circle"></i> 请选择省份
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="city" class="required">城市</label>
+                                    <select id="city">
+                                        <option value="">请选择城市</option>
+                                    </select>
+                                    <div id="cityError" class="error-message" style="display: none;">
+                                        <i class="fas fa-exclamation-circle"></i> 请选择城市
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="postalCode" class="required">邮政编码</label>
+                                <input type="text" id="postalCode" placeholder="100000">
+                                <div id="postalCodeError" class="error-message" style="display: none;">
+                                    <i class="fas fa-exclamation-circle"></i> 请输入6位邮政编码
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="notes">配送备注（可选）</label>
+                                <textarea id="notes" rows="3" placeholder="如有特殊配送要求、上班时间、门卫代收等，请在此注明"></textarea>
+                                <div class="form-help">
+                                    <i class="fas fa-info-circle"></i> 我们会在工作日9:00-18:00配送
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 步骤2：支付方式 -->
+                        <div id="step2Form" class="form-section" style="display: none;">
+                            <h3><i class="fas fa-credit-card"></i> 支付方式</h3>
+                            <div class="payment-methods">
+                                <div class="payment-method" id="alipayMethod">
+                                    <div class="payment-icon alipay">
+                                        <i class="fab fa-alipay"></i>
+                                    </div>
+                                    <div class="payment-info">
+                                        <h4>支付宝</h4>
+                                        <p>推荐使用，支付更便捷</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="payment-method" id="wechatMethod">
+                                    <div class="payment-icon wechat">
+                                        <i class="fab fa-weixin"></i>
+                                    </div>
+                                    <div class="payment-info">
+                                        <h4>微信支付</h4>
+                                        <p>微信用户首选</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="payment-method" id="creditMethod">
+                                    <div class="payment-icon credit">
+                                        <i class="far fa-credit-card"></i>
+                                    </div>
+                                    <div class="payment-info">
+                                        <h4>信用卡</h4>
+                                        <p>Visa/Mastercard/银联</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 虚拟支付提示 -->
+                            <div class="virtual-payment-notice">
+                                <i class="fas fa-info-circle"></i>
+                                <span>此为演示页面，不会进行真实扣款。请随意填写支付信息进行测试。</span>
+                            </div>
+                            
+                            <!-- 支付宝/微信支付二维码 -->
+                            <div id="alipayQrcode" class="qrcode-container" style="display: none;">
+                                <p>请使用手机扫描二维码完成支付</p>
+                                <div class="qrcode-placeholder alipay">
+                                    <div class="qrcode-image" id="alipayQrcodeImg">
+                                        <!-- 虚拟二维码 -->
+                                        <canvas id="alipayCanvas" width="160" height="160"></canvas>
+                                    </div>
+                                    <p style="font-size: 14px; color: #666; margin-top: 10px;">
+                                        支付宝扫码支付
+                                    </p>
+                                    <p style="font-size: 12px; color: #999; margin-top: 5px;">
+                                        请保存此页面以便支付
+                                    </p>
+                                </div>
+                                <p style="font-size: 0.9rem; color: #7f8c8d; margin-top: 15px;">
+                                    <i class="fas fa-clock"></i> 二维码有效时间：15分钟
+                                </p>
+                            </div>
+                            
+                            <!-- 微信支付二维码 -->
+                            <div id="wechatQrcode" class="qrcode-container" style="display: none;">
+                                <p>请使用手机扫描二维码完成支付</p>
+                                <div class="qrcode-placeholder wechat">
+                                    <div class="qrcode-image" id="wechatQrcodeImg">
+                                        <!-- 虚拟二维码 -->
+                                        <canvas id="wechatCanvas" width="160" height="160"></canvas>
+                                    </div>
+                                    <p style="font-size: 14px; color: #666; margin-top: 10px;">
+                                        微信扫码支付
+                                    </p>
+                                    <p style="font-size: 12px; color: #999; margin-top: 5px;">
+                                        请保存此页面以便支付
+                                    </p>
+                                </div>
+                                <p style="font-size: 0.9rem; color: #7f8c8d; margin-top: 15px;">
+                                    <i class="fas fa-clock"></i> 二维码有效时间：15分钟
+                                </p>
+                            </div>
+                            
+                            <!-- 信用卡表单 -->
+                            <div id="creditCardForm" class="credit-card-form" style="display: none;">
+                                <div class="card-preview">
+                                    <div class="card-chip"></div>
+                                    <div class="card-number-preview" id="cardNumberPreview">
+                                        **** **** **** ****
+                                    </div>
+                                    <div class="card-expiry-preview" id="expiryDatePreview">
+                                        有效期：MM/YY
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="cardNumber" class="required">信用卡号</label>
+                                    <input type="text" id="cardNumber" maxlength="19" placeholder="1234 5678 9012 3456">
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="expiryDate" class="required">有效期</label>
+                                        <input type="text" id="expiryDate" maxlength="5" placeholder="MM/YY">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="cvv" class="required">安全码</label>
+                                        <input type="text" id="cvv" maxlength="3" placeholder="123">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cardName" class="required">持卡人姓名</label>
+                                    <input type="text" id="cardName" placeholder="ZHANG SAN">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 步骤3：确认订单 -->
+                        <div id="step3Form" class="form-section" style="display: none;">
+                            <h3><i class="fas fa-check-circle"></i> 确认订单</h3>
+                            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                                <h4 style="margin: 0 0 15px 0; color: #2d5016; display: flex; align-items: center; gap: 10px;">
+                                    <i class="fas fa-user-check"></i> 收货信息
+                                </h4>
+                                
+                                <div id="shippingInfoPreview" style="margin-bottom: 15px; line-height: 1.6;">
+                                    <!-- 这里会动态显示收货信息 -->
+                                </div>
+                                
+                                <h4 style="margin: 20px 0 15px 0; color: #2d5016; display: flex; align-items: center; gap: 10px;">
+                                    <i class="fas fa-credit-card"></i> 支付信息
+                                </h4>
+                                
+                                <div id="paymentInfoPreview" style="margin-bottom: 15px;">
+                                    <!-- 这里会动态显示支付信息 -->
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer;">
+                                    <input type="checkbox" id="termsAgreed">
+                                    <span>
+                                        我同意 <a href="#" style="color: #3498db;">《服务条款》</a> 和 
+                                        <a href="#" style="color: #3498db;">《隐私政策》</a>，
+                                        并确认以上信息准确无误
+                                    </span>
+                                </label>
+                                <div id="termsError" class="error-message" style="display: none;">
+                                    <i class="fas fa-exclamation-circle"></i> 请同意服务条款和隐私政策
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 导航按钮 -->
+                        <div class="checkout-buttons">
+                            <button id="btnBack" style="display: none;" class="btn-back">
+                                <i class="fas fa-arrow-left"></i> 上一步
+                            </button>
+                            <div id="emptySpace"></div>
+                            
+                            <button id="btnNext" class="btn-submit">
+                                下一步 <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 右侧订单汇总 -->
+                    <div class="order-summary">
+                        <h3 style="margin: 0 0 20px 0; color: #2d5016; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-receipt"></i> 订单汇总
+                        </h3>
+                        
+                        <div id="orderItemsList" class="order-items">
+                            <!-- 这里会动态加载订单商品 -->
+                        </div>
+                        
+                        <div class="order-summary-details">
+                            <div class="summary-row">
+                                <span>商品总价</span>
+                                <span id="subtotal">¥0.00</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>运费</span>
+                                <span id="shippingFee" style="color: #27ae60;">免费</span>
+                            </div>
+                            <div class="summary-row discount">
+                                <span>优惠折扣</span>
+                                <span id="discount">-¥0.00</span>
+                            </div>
+                            <div class="summary-row total">
+                                <span>订单总计</span>
+                                <span id="orderTotal">¥0.00</span>
+                            </div>
+                        </div>
+                        
+                        <div class="delivery-info">
+                            <p><i class="fas fa-shipping-fast"></i> 预计配送时间：3-5个工作日</p>
+                            <p><i class="fas fa-undo"></i> 支持7天无理由退换货</p>
+                            <p><i class="fas fa-shield-alt"></i> 正品保证，假一赔十</p>
+                            <p><i class="fas fa-gift"></i> 满200元包邮</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="copyright">© 2025 花卉百科 版权所有</div>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-weixin"></i> 微信</a>
+                <a href="#"><i class="fab fa-weibo"></i> 微博</a>
+                <a href="#"><i class="fab fa-tiktok"></i> 抖音</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 省份城市映射
+       const citiesByProvince = {
+           '北京市': ['北京市'],
+           '天津市': ['天津市'],
+           '上海市': ['上海市'],
+           '重庆市': ['重庆市'],
+           '河北省': ['石家庄市', '唐山市', '秦皇岛市', '邯郸市', '邢台市', '保定市', '张家口市', '承德市', '沧州市', '廊坊市', '衡水市'],
+           '山西省': ['太原市', '大同市', '阳泉市', '长治市', '晋城市', '朔州市', '晋中市', '运城市', '忻州市', '临汾市', '吕梁市'],
+           '内蒙古自治区': ['呼和浩特市', '包头市', '乌海市', '赤峰市', '通辽市', '鄂尔多斯市', '呼伦贝尔市', '巴彦淖尔市', '乌兰察布市', '兴安盟', '锡林郭勒盟', '阿拉善盟'],
+           '辽宁省': ['沈阳市', '大连市', '鞍山市', '抚顺市', '本溪市', '丹东市', '锦州市', '营口市', '阜新市', '辽阳市', '盘锦市', '铁岭市', '朝阳市', '葫芦岛市'],
+           '吉林省': ['长春市', '吉林市', '四平市', '辽源市', '通化市', '白山市', '松原市', '白城市', '延边朝鲜族自治州'],
+           '黑龙江省': ['哈尔滨市', '齐齐哈尔市', '鸡西市', '鹤岗市', '双鸭山市', '大庆市', '伊春市', '佳木斯市', '七台河市', '牡丹江市', '黑河市', '绥化市', '大兴安岭地区'],
+           '江苏省': ['南京市', '无锡市', '徐州市', '常州市', '苏州市', '南通市', '连云港市', '淮安市', '盐城市', '扬州市', '镇江市', '泰州市', '宿迁市'],
+           '浙江省': ['杭州市', '宁波市', '温州市', '嘉兴市', '湖州市', '绍兴市', '金华市', '衢州市', '舟山市', '台州市', '丽水市'],
+           '安徽省': ['合肥市', '芜湖市', '蚌埠市', '淮南市', '马鞍山市', '淮北市', '铜陵市', '安庆市', '黄山市', '滁州市', '阜阳市', '宿州市', '六安市', '亳州市', '池州市', '宣城市'],
+           '福建省': ['福州市', '厦门市', '莆田市', '三明市', '泉州市', '漳州市', '南平市', '龙岩市', '宁德市'],
+           '江西省': ['南昌市', '景德镇市', '萍乡市', '九江市', '新余市', '鹰潭市', '赣州市', '吉安市', '宜春市', '抚州市', '上饶市'],
+           '山东省': ['济南市', '青岛市', '淄博市', '枣庄市', '东营市', '烟台市', '潍坊市', '济宁市', '泰安市', '威海市', '日照市', '临沂市', '德州市', '聊城市', '滨州市', '菏泽市'],
+           '河南省': ['郑州市', '开封市', '洛阳市', '平顶山市', '安阳市', '鹤壁市', '新乡市', '焦作市', '濮阳市', '许昌市', '漯河市', '三门峡市', '南阳市', '商丘市', '信阳市', '周口市', '驻马店市', '济源市'],
+           '湖北省': ['武汉市', '黄石市', '十堰市', '宜昌市', '襄阳市', '鄂州市', '荆门市', '孝感市', '荆州市', '黄冈市', '咸宁市', '随州市', '恩施土家族苗族自治州', '仙桃市', '潜江市', '天门市', '神农架林区'],
+           '湖南省': ['长沙市', '株洲市', '湘潭市', '衡阳市', '邵阳市', '岳阳市', '常德市', '张家界市', '益阳市', '郴州市', '永州市', '怀化市', '娄底市', '湘西土家族苗族自治州'],
+           '广东省': ['广州市', '韶关市', '深圳市', '珠海市', '汕头市', '佛山市', '江门市', '湛江市', '茂名市', '肇庆市', '惠州市', '梅州市', '汕尾市', '河源市', '阳江市', '清远市', '东莞市', '中山市', '潮州市', '揭阳市', '云浮市'],
+           '广西壮族自治区': ['南宁市', '柳州市', '桂林市', '梧州市', '北海市', '防城港市', '钦州市', '贵港市', '玉林市', '百色市', '贺州市', '河池市', '来宾市', '崇左市'],
+           '海南省': ['海口市', '三亚市', '三沙市', '儋州市', '五指山市', '琼海市', '文昌市', '万宁市', '东方市', '定安县', '屯昌县', '澄迈县', '临高县', '白沙黎族自治县', '昌江黎族自治县', '乐东黎族自治县', '陵水黎族自治县', '保亭黎族苗族自治县', '琼中黎族苗族自治县'],
+           '四川省': ['成都市', '自贡市', '攀枝花市', '泸州市', '德阳市', '绵阳市', '广元市', '遂宁市', '内江市', '乐山市', '南充市', '眉山市', '宜宾市', '广安市', '达州市', '雅安市', '巴中市', '资阳市', '阿坝藏族羌族自治州', '甘孜藏族自治州', '凉山彝族自治州'],
+           '贵州省': ['贵阳市', '六盘水市', '遵义市', '安顺市', '毕节市', '铜仁市', '黔西南布依族苗族自治州', '黔东南苗族侗族自治州', '黔南布依族苗族自治州'],
+           '云南省': ['昆明市', '曲靖市', '玉溪市', '保山市', '昭通市', '丽江市', '普洱市', '临沧市', '楚雄彝族自治州', '红河哈尼族彝族自治州', '文山壮族苗族自治州', '西双版纳傣族自治州', '大理白族自治州', '德宏傣族景颇族自治州', '怒江傈僳族自治州', '迪庆藏族自治州'],
+           '西藏自治区': ['拉萨市', '日喀则市', '昌都市', '林芝市', '山南市', '那曲市', '阿里地区'],
+           '陕西省': ['西安市', '铜川市', '宝鸡市', '咸阳市', '渭南市', '延安市', '汉中市', '榆林市', '安康市', '商洛市'],
+           '甘肃省': ['兰州市', '嘉峪关市', '金昌市', '白银市', '天水市', '武威市', '张掖市', '平凉市', '酒泉市', '庆阳市', '定西市', '陇南市', '临夏回族自治州', '甘南藏族自治州'],
+           '青海省': ['西宁市', '海东市', '海北藏族自治州', '黄南藏族自治州', '海南藏族自治州', '果洛藏族自治州', '玉树藏族自治州', '海西蒙古族藏族自治州'],
+           '宁夏回族自治区': ['银川市', '石嘴山市', '吴忠市', '固原市', '中卫市'],
+           '新疆维吾尔自治区': ['乌鲁木齐市', '克拉玛依市', '吐鲁番市', '哈密市', '昌吉回族自治州', '博尔塔拉蒙古自治州', '巴音郭楞蒙古自治州', '阿克苏地区', '克孜勒苏柯尔克孜自治州', '喀什地区', '和田地区', '伊犁哈萨克自治州', '塔城地区', '阿勒泰地区', '石河子市', '阿拉尔市', '图木舒克市', '五家渠市', '北屯市', '铁门关市', '双河市', '可克达拉市', '昆玉市', '胡杨河市'],
+           '香港特别行政区': ['香港岛', '九龙', '新界'],
+           '澳门特别行政区': ['澳门半岛', '氹仔岛', '路环岛', '路氹城'],
+           '台湾省': ['台北市', '高雄市', '基隆市', '台中市', '台南市', '新竹市', '嘉义市', '桃园市', '新竹县', '苗栗县', '彰化县', '南投县', '云林县', '嘉义县', '屏东县', '宜兰县', '花莲县', '台东县', '澎湖县', '金门县', '连江县']
+       };
+
+        // 当前步骤
+        let currentStep = 1;
+        let selectedPaymentMethod = 'alipay';
+        let checkoutData = null;
+        let orderItems = [];
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            // 更新购物车数量
+            updateCartCount();
+            
+            // 加载结账数据
+            loadCheckoutData();
+            
+            // 设置省份选择事件
+            const provinceSelect = document.getElementById('province');
+            if (provinceSelect) {
+                provinceSelect.addEventListener('change', function() {
+                    updateCities(this.value);
+                });
+            }
+            
+            // 支付方式选择
+            setupPaymentMethods();
+            
+            // 信用卡号格式化
+            const cardNumberInput = document.getElementById('cardNumber');
+            const expiryDateInput = document.getElementById('expiryDate');
+            if (cardNumberInput) {
+                cardNumberInput.addEventListener('input', formatCardNumber);
+            }
+            if (expiryDateInput) {
+                expiryDateInput.addEventListener('input', formatExpiryDate);
+            }
+            
+            // 步骤按钮
+            const btnNext = document.getElementById('btnNext');
+            const btnBack = document.getElementById('btnBack');
+            if (btnNext) {
+                btnNext.addEventListener('click', nextStep);
+            }
+            if (btnBack) {
+                btnBack.addEventListener('click', previousStep);
+            }
+            
+            // 生成虚拟二维码
+            generateVirtualQRCode();
+        });
+
+        // 更新购物车数量
+        function updateCartCount() {
+            const cartCountElement = document.getElementById('cartCount');
+            if (cartCountElement) {
+                try {
+                    const savedCart = localStorage.getItem('flowerCart');
+                    if (savedCart) {
+                        const cartItems = JSON.parse(savedCart);
+                        const count = cartItems.reduce((total, item) => total + item.quantity, 0);
+                        cartCountElement.textContent = count;
+                        cartCountElement.style.display = count > 0 ? 'flex' : 'none';
+                    } else {
+                        cartCountElement.style.display = 'none';
+                    }
+                } catch (e) {
+                    console.error('更新购物车数量失败:', e);
+                    cartCountElement.style.display = 'none';
+                }
+            }
+        }
+
+        // 处理图片错误
+        function handleImageError(event) {
+            const img = event.target;
+            const flowerName = img.alt || '花卉';
+            const placeholderColors = {
+                '玫瑰': 'ff6b6b', '郁金香': '74b9ff', '百合': 'a29bfe', 
+                '兰花': '55efc4', '牡丹': 'fd79a8', '向日葵': 'fdcb6e',
+                '康乃馨': 'e17055', '茉莉': '00cec9'
+            };
+            const color = placeholderColors[flowerName] || '2d5016';
+            
+            const svg = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60">
+                    <rect width="100%" height="100%" fill="#${color}"/>
+                    <text x="50%" y="50%" text-anchor="middle" dy=".3em" 
+                          fill="white" font-family="Arial" font-size="12">
+                        ${flowerName.substring(0, 6)}
+                    </text>
+                </svg>
+            `;
+            img.src = 'data:image/svg+xml;base64,' + btoa(svg);
+            img.onerror = null; // 防止无限循环
+        }
+
+        // 渲染订单商品
+        function renderOrderItems() {
+            const container = document.getElementById('orderItemsList');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            if (!orderItems || orderItems.length === 0) {
+                container.innerHTML = '<p style="color: #7f8c8d; text-align: center;">暂无商品</p>';
+                return;
+            }
+            
+            orderItems.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'order-item';
+                div.innerHTML = `
+                    <div class="order-item-image">
+                        <img src="${item.image || ''}" alt="${item.name || '商品'}" onerror="handleImageError(event)">
+                    </div>
+                    <div class="order-item-info">
+                        <h5>${item.name || '未命名商品'}</h5>
+                        <div class="order-item-details">
+                            <span>数量：${item.quantity || 1}</span>
+                            <span class="order-item-price">¥${((item.price || 0) * (item.quantity || 1)).toFixed(2)}</span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // 加载结账数据
+        function loadCheckoutData() {
+            try {
+                const data = localStorage.getItem('checkoutData');
+                if (data) {
+                    checkoutData = JSON.parse(data);
+                    orderItems = checkoutData.items || [];
+                    updateOrderSummary();
+                    renderOrderItems();
+                } else {
+                    console.warn('没有找到结账数据，跳转到购物车页面');
+                    setTimeout(() => {
+                        window.location.href = 'cart.html';
+                    }, 1000);
+                }
+            } catch (e) {
+                console.error('加载结账数据失败:', e);
+                alert('加载订单数据失败，请返回购物车重新操作');
+                window.location.href = 'cart.html';
+            }
+        }
+
+        // 更新城市选项
+        function updateCities(province) {
+            const citySelect = document.getElementById('city');
+            if (!citySelect) return;
+            
+            citySelect.innerHTML = '<option value="">请选择城市</option>';
+            
+            if (province && citiesByProvince[province]) {
+                citiesByProvince[province].forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city;
+                    option.textContent = city;
+                    citySelect.appendChild(option);
+                });
+            }
+        }
+
+        // 设置支付方式
+        function setupPaymentMethods() {
+            const methods = document.querySelectorAll('.payment-method');
+            methods.forEach(method => {
+                method.addEventListener('click', function() {
+                    // 移除所有选择状态
+                    methods.forEach(m => m.classList.remove('selected'));
+                    // 添加当前选择状态
+                    this.classList.add('selected');
+                    
+                    // 更新选择的支付方式
+                    if (this.id === 'alipayMethod') {
+                        selectedPaymentMethod = 'alipay';
+                        showPaymentForm('alipay');
+                    } else if (this.id === 'wechatMethod') {
+                        selectedPaymentMethod = 'wechat';
+                        showPaymentForm('wechat');
+                    } else if (this.id === 'creditMethod') {
+                        selectedPaymentMethod = 'credit';
+                        showPaymentForm('credit');
+                    }
+                });
+            });
+            
+            // 默认选择支付宝
+            const alipayMethod = document.getElementById('alipayMethod');
+            if (alipayMethod) {
+                alipayMethod.classList.add('selected');
+                showPaymentForm('alipay');
+            }
+        }
+
+        // 显示支付表单
+        function showPaymentForm(method) {
+            // 隐藏所有支付表单
+            const forms = ['alipayQrcode', 'wechatQrcode', 'creditCardForm'];
+            forms.forEach(formId => {
+                const form = document.getElementById(formId);
+                if (form) form.style.display = 'none';
+            });
+            
+            // 显示对应的支付表单
+            if (method === 'alipay') {
+                const alipayForm = document.getElementById('alipayQrcode');
+                if (alipayForm) alipayForm.style.display = 'block';
+            } else if (method === 'wechat') {
+                const wechatForm = document.getElementById('wechatQrcode');
+                if (wechatForm) wechatForm.style.display = 'block';
+            } else if (method === 'credit') {
+                const creditForm = document.getElementById('creditCardForm');
+                if (creditForm) creditForm.style.display = 'block';
+            }
+        }
+
+        // 格式化信用卡号
+        function formatCardNumber(event) {
+            let value = event.target.value.replace(/\D/g, '');
+            value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+            event.target.value = value;
+            
+            // 更新预览
+            const preview = document.getElementById('cardNumberPreview');
+            if (preview) {
+                preview.textContent = value || '**** **** **** ****';
+            }
+        }
+
+        // 格式化有效期
+        function formatExpiryDate(event) {
+            let value = event.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            event.target.value = value;
+            
+            // 更新预览
+            const preview = document.getElementById('expiryDatePreview');
+            if (preview) {
+                preview.textContent = value ? `有效期：${value}` : '有效期：MM/YY';
+            }
+        }
+
+        // 生成虚拟二维码
+        function generateVirtualQRCode() {
+            // 为支付宝生成虚拟二维码
+            const alipayCanvas = document.getElementById('alipayCanvas');
+            if (alipayCanvas) {
+                const ctx = alipayCanvas.getContext('2d');
+                drawVirtualQRCode(ctx, '#00a0e9');
+            }
+            
+            // 为微信生成虚拟二维码
+            const wechatCanvas = document.getElementById('wechatCanvas');
+            if (wechatCanvas) {
+                const ctx = wechatCanvas.getContext('2d');
+                drawVirtualQRCode(ctx, '#07c160');
+            }
+        }
+
+        // 绘制虚拟二维码
+        function drawVirtualQRCode(ctx, color) {
+            const size = 160;
+            const cellSize = size / 25;
+            
+            // 填充白色背景
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, size, size);
+            
+            // 绘制二维码图案（虚拟）
+            ctx.fillStyle = color;
+            
+            // 绘制三个定位图案
+            drawFinderPattern(ctx, cellSize * 2, cellSize * 2, cellSize);
+            drawFinderPattern(ctx, cellSize * 20, cellSize * 2, cellSize);
+            drawFinderPattern(ctx, cellSize * 2, cellSize * 20, cellSize);
+            
+            // 绘制随机数据点
+            for (let i = 0; i < 200; i++) {
+                const x = Math.floor(Math.random() * 21) + 2;
+                const y = Math.floor(Math.random() * 21) + 2;
+                if (!isInFinderPattern(x, y)) {
+                    ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+                }
+            }
+        }
+
+        // 绘制定位图案
+        function drawFinderPattern(ctx, x, y, cellSize) {
+            ctx.fillStyle = ctx.fillStyle; // 保持当前颜色
+            ctx.fillRect(x, y, cellSize * 7, cellSize * 7);
+            ctx.fillStyle = 'white';
+            ctx.fillRect(x + cellSize, y + cellSize, cellSize * 5, cellSize * 5);
+            ctx.fillStyle = ctx.fillStyle === '#00a0e9' ? '#00a0e9' : '#07c160';
+            ctx.fillRect(x + cellSize * 2, y + cellSize * 2, cellSize * 3, cellSize * 3);
+        }
+
+        // 检查是否在定位图案内
+        function isInFinderPattern(x, y) {
+            const finderPatterns = [
+                {x: 2, y: 2, size: 7},
+                {x: 20, y: 2, size: 7},
+                {x: 2, y: 20, size: 7}
+            ];
+            
+            for (const pattern of finderPatterns) {
+                if (x >= pattern.x && x < pattern.x + pattern.size &&
+                    y >= pattern.y && y < pattern.y + pattern.size) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // 更新订单汇总
+        function updateOrderSummary() {
+            if (!checkoutData) return;
+            
+            const subtotalEl = document.getElementById('subtotal');
+            const shippingFeeEl = document.getElementById('shippingFee');
+            const discountEl = document.getElementById('discount');
+            const orderTotalEl = document.getElementById('orderTotal');
+            
+            if (subtotalEl) subtotalEl.textContent = `¥${(checkoutData.subtotal || 0).toFixed(2)}`;
+            if (shippingFeeEl) {
+                shippingFeeEl.textContent = 
+                    (checkoutData.shipping === 0 || !checkoutData.shipping) ? '免费' : `¥${(checkoutData.shipping || 0).toFixed(2)}`;
+            }
+            if (discountEl) discountEl.textContent = `-¥${(checkoutData.discount || 0).toFixed(2)}`;
+            if (orderTotalEl) orderTotalEl.textContent = `¥${(checkoutData.total || 0).toFixed(2)}`;
+        }
+
+        // 验证步骤1
+        function validateStep1() {
+            let isValid = true;
+            
+            // 重置错误显示
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.style.display = 'none';
+            });
+            
+            // 验证姓
+            const firstName = document.getElementById('firstName')?.value.trim();
+            if (!firstName) {
+                const errorEl = document.getElementById('firstNameError');
+                if (errorEl) errorEl.style.display = 'flex';
+                isValid = false;
+            }
+            
+            // 验证名
+            const lastName = document.getElementById('lastName')?.value.trim();
+            if (!lastName) {
+                const errorEl = document.getElementById('lastNameError');
+                if (errorEl) errorEl.style.display = 'flex';
+                isValid = false;
+            }
+            
+            // 验证手机
+            const phone = document.getElementById('phone')?.value.trim();
+            if (!phone || !/^1[3-9]\d{9}$/.test(phone)) {
+                const errorEl = document.getElementById('phoneError');
+                if (errorEl) errorEl.style.display = 'flex';
+                isValid = false;
+            }
+            
+            // 验证邮箱
+            const email = document.getElementById('email')?.value.trim();
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                const errorEl = document.getElementById('emailError');
+                if (errorEl) errorEl.style.display = 'flex';
+                isValid = false;
+            }
+            
+            // 验证地址
+            const address = document.getElementById('address')?.value.trim();
+            if (!address) {
+                const errorEl = document.getElementById('addressError');
+                if (errorEl) errorEl.style.display = 'flex';
+                isValid = false;
+            }
+            
+            // 验证省份
+            const province = document.getElementById('province')?.value;
+            if (!province) {
+                const errorEl = document.getElementById('provinceError');
+                if (errorEl) errorEl.style.display = 'flex';
+                isValid = false;
+            }
+            
+            // 验证城市
+            const city = document.getElementById('city')?.value;
+            if (!city) {
+                const errorEl = document.getElementById('cityError');
+                if (errorEl) errorEl.style.display = 'flex';
+                isValid = false;
+            }
+            
+            // 验证邮编
+            const postalCode = document.getElementById('postalCode')?.value.trim();
+            if (!postalCode || !/^\d{6}$/.test(postalCode)) {
+                const errorEl = document.getElementById('postalCodeError');
+                if (errorEl) errorEl.style.display = 'flex';
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+
+        // 验证步骤3
+        function validateStep3() {
+            const termsAgreed = document.getElementById('termsAgreed')?.checked;
+            if (!termsAgreed) {
+                const errorEl = document.getElementById('termsError');
+                if (errorEl) errorEl.style.display = 'flex';
+                return false;
+            }
+            const errorEl = document.getElementById('termsError');
+            if (errorEl) errorEl.style.display = 'none';
+            return true;
+        }
+
+        // 下一步
+        function nextStep() {
+            if (currentStep === 1) {
+                if (validateStep1()) {
+                    // 保存收货信息到本地存储
+                    saveShippingInfo();
+                    
+                    // 更新步骤显示
+                    updateStepDisplay(2);
+                }
+            } else if (currentStep === 2) {
+                // 步骤2不需要验证支付方式（因为是虚拟的）
+                // 更新确认页面的信息预览
+                updateConfirmationPreview();
+                
+                // 更新步骤显示
+                updateStepDisplay(3);
+            } else if (currentStep === 3) {
+                if (validateStep3()) {
+                    submitOrder();
+                }
+            }
+        }
+
+        // 上一步
+        function previousStep() {
+            if (currentStep > 1) {
+                updateStepDisplay(currentStep - 1);
+            }
+        }
+
+        // 更新步骤显示
+        function updateStepDisplay(step) {
+            currentStep = step;
+            
+            // 更新步骤指示器
+            for (let i = 1; i <= 3; i++) {
+                const stepElement = document.getElementById(`step${i}`);
+                if (stepElement) {
+                    if (i < step) {
+                        stepElement.classList.add('completed');
+                        stepElement.classList.remove('active');
+                    } else if (i === step) {
+                        stepElement.classList.add('active');
+                        stepElement.classList.remove('completed');
+                    } else {
+                        stepElement.classList.remove('active', 'completed');
+                    }
+                }
+            }
+            
+            // 显示/隐藏表单部分
+            for (let i = 1; i <= 3; i++) {
+                const formSection = document.getElementById(`step${i}Form`);
+                if (formSection) {
+                    formSection.style.display = i === step ? 'block' : 'none';
+                }
+            }
+            
+            // 更新按钮文本和显示
+            const btnNext = document.getElementById('btnNext');
+            const btnBack = document.getElementById('btnBack');
+            const emptySpace = document.getElementById('emptySpace');
+            
+            if (btnNext) {
+                if (step === 3) {
+                    btnNext.innerHTML = '<i class="fas fa-lock"></i> 提交订单并支付';
+                } else {
+                    btnNext.innerHTML = '下一步 <i class="fas fa-arrow-right"></i>';
+                }
+            }
+            
+            if (btnBack && emptySpace) {
+                if (step > 1) {
+                    btnBack.style.display = 'block';
+                    emptySpace.style.display = 'none';
+                } else {
+                    btnBack.style.display = 'none';
+                    emptySpace.style.display = 'block';
+                }
+            }
+        }
+
+        // 保存收货信息
+        function saveShippingInfo() {
+            const shippingInfo = {
+                firstName: document.getElementById('firstName')?.value.trim() || '',
+                lastName: document.getElementById('lastName')?.value.trim() || '',
+                phone: document.getElementById('phone')?.value.trim() || '',
+                email: document.getElementById('email')?.value.trim() || '',
+                address: document.getElementById('address')?.value.trim() || '',
+                province: document.getElementById('province')?.value || '',
+                city: document.getElementById('city')?.value || '',
+                postalCode: document.getElementById('postalCode')?.value.trim() || '',
+                notes: document.getElementById('notes')?.value.trim() || ''
+            };
+            
+            localStorage.setItem('shippingInfo', JSON.stringify(shippingInfo));
+        }
+
+        // 更新确认预览
+        function updateConfirmationPreview() {
+            // 收货信息预览
+            const shippingPreview = document.getElementById('shippingInfoPreview');
+            if (shippingPreview) {
+                let shippingInfo = {};
+                try {
+                    shippingInfo = JSON.parse(localStorage.getItem('shippingInfo') || '{}');
+                } catch (e) {
+                    console.error('解析收货信息失败:', e);
+                }
+                
+                shippingPreview.innerHTML = `
+                    <p style="margin: 5px 0;"><strong><i class="fas fa-user"></i> 收货人：</strong>${shippingInfo.lastName || ''}${shippingInfo.firstName || ''}</p>
+                    <p style="margin: 5px 0;"><strong><i class="fas fa-phone"></i> 电话：</strong>${shippingInfo.phone || ''}</p>
+                    <p style="margin: 5px 0;"><strong><i class="fas fa-map-marker-alt"></i> 地址：</strong>${shippingInfo.province || ''}${shippingInfo.city || ''}${shippingInfo.address || ''}</p>
+                    <p style="margin: 5px 0;"><strong><i class="fas fa-mail-bulk"></i> 邮编：</strong>${shippingInfo.postalCode || ''}</p>
+                    ${shippingInfo.notes ? `<p style="margin: 5px 0;"><strong><i class="fas fa-sticky-note"></i> 备注：</strong>${shippingInfo.notes}</p>` : ''}
+                `;
+            }
+            
+            // 支付信息预览
+            const paymentPreview = document.getElementById('paymentInfoPreview');
+            if (paymentPreview) {
+                let paymentMethodName = '';
+                if (selectedPaymentMethod === 'alipay') paymentMethodName = '支付宝';
+                else if (selectedPaymentMethod === 'wechat') paymentMethodName = '微信支付';
+                else if (selectedPaymentMethod === 'credit') paymentMethodName = '信用卡';
+                
+                paymentPreview.innerHTML = `
+                    <p style="margin: 5px 0;"><strong>支付方式：</strong><span style="color: #27ae60;">${paymentMethodName}</span></p>
+                `;
+            }
+        }
+
+        // 提交订单
+        function submitOrder() {
+            // 显示加载状态
+            const btnNext = document.getElementById('btnNext');
+            if (!btnNext) return;
+            
+            const originalText = btnNext.innerHTML;
+            btnNext.innerHTML = '<span class="loading"></span> 正在处理...';
+            btnNext.disabled = true;
+            
+            // 模拟网络延迟
+            setTimeout(() => {
+                try {
+                    // 生成订单数据
+                    const orderId = 'ORD' + Date.now() + Math.floor(Math.random() * 10000);
+                    const orderTime = new Date();
+                    let shippingInfo = {};
+                    try {
+                        shippingInfo = JSON.parse(localStorage.getItem('shippingInfo') || '{}');
+                    } catch (e) {
+                        console.error('解析收货信息失败:', e);
+                    }
+                    
+                    // 保存订单
+                    const orderData = {
+                        id: orderId,
+                        items: orderItems,
+                        summary: checkoutData,
+                        shippingInfo: shippingInfo,
+                        paymentMethod: selectedPaymentMethod,
+                        date: orderTime.toISOString(),
+                        status: 'pending',
+                        paymentStatus: 'paid'
+                    };
+                    
+                    localStorage.setItem('order_' + orderId, JSON.stringify(orderData));
+                    
+                    // 添加到订单列表
+                    let userOrders = [];
+                    try {
+                        userOrders = JSON.parse(localStorage.getItem('userOrders') || '[]');
+                    } catch (e) {
+                        console.error('解析订单列表失败:', e);
+                    }
+                    userOrders.push({
+                        id: orderId,
+                        date: orderTime.toISOString(),
+                        total: checkoutData?.total || 0,
+                        status: 'pending',
+                        itemCount: orderItems.length
+                    });
+                    localStorage.setItem('userOrders', JSON.stringify(userOrders));
+                    
+                    // 清空购物车
+                    localStorage.removeItem('flowerCart');
+                    localStorage.removeItem('checkoutData');
+                    
+                    // 更新成功页面信息
+                    updateSuccessPage(orderId, orderTime, shippingInfo);
+                    
+                    // 显示成功页面
+                    const checkoutForm = document.getElementById('checkoutForm');
+                    const successPage = document.getElementById('successPage');
+                    if (checkoutForm) checkoutForm.style.display = 'none';
+                    if (successPage) successPage.style.display = 'block';
+                    
+                } catch (error) {
+                    console.error('提交订单失败:', error);
+                    alert('提交订单失败，请重试');
+                } finally {
+                    // 重置按钮状态
+                    btnNext.innerHTML = originalText;
+                    btnNext.disabled = false;
+                }
+            }, 2000);
+        }
+
+        // 更新成功页面信息
+        function updateSuccessPage(orderId, orderTime, shippingInfo) {
+            const orderNumberEl = document.getElementById('orderNumber');
+            const orderTimeEl = document.getElementById('orderTime');
+            const orderTotalEl = document.getElementById('orderTotal');
+            const paymentMethodEl = document.getElementById('paymentMethod');
+            const shippingNameEl = document.getElementById('shippingName');
+            const shippingPhoneEl = document.getElementById('shippingPhone');
+            const shippingEmailEl = document.getElementById('shippingEmail');
+            
+            if (orderNumberEl) orderNumberEl.textContent = orderId;
+            if (orderTimeEl) {
+                orderTimeEl.textContent = 
+                    `${orderTime.getFullYear()}-${(orderTime.getMonth()+1).toString().padStart(2, '0')}-${orderTime.getDate().toString().padStart(2, '0')} ${orderTime.getHours().toString().padStart(2, '0')}:${orderTime.getMinutes().toString().padStart(2, '0')}`;
+            }
+            if (orderTotalEl) orderTotalEl.textContent = `¥${(checkoutData?.total || 0).toFixed(2)}`;
+            
+            let paymentMethodName = '';
+            if (selectedPaymentMethod === 'alipay') paymentMethodName = '支付宝';
+            else if (selectedPaymentMethod === 'wechat') paymentMethodName = '微信支付';
+            else if (selectedPaymentMethod === 'credit') paymentMethodName = '信用卡';
+            if (paymentMethodEl) paymentMethodEl.textContent = paymentMethodName;
+            
+            if (shippingNameEl) shippingNameEl.textContent = `${shippingInfo.lastName || ''}${shippingInfo.firstName || ''}`;
+            if (shippingPhoneEl) shippingPhoneEl.textContent = shippingInfo.phone || '';
+            if (shippingEmailEl) shippingEmailEl.textContent = shippingInfo.email || '';
+        }
+    </script>
+</body>
+</html>

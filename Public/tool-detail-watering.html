@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>浇水壶使用指南 - 花卉百科</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>花卉百科</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="categories.html">花卉分类</a></li>
+                <li><a href="care-guide.html">养护指南</a></li>
+                <li><a href="about.html">关于我们</a></li>
+                <li><a href="login.html">个人中心</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 工具详情 -->
+    <section class="care-guide-page">
+        <div class="container">
+            <div class="guide-section">
+                <h2>浇水壶使用指南</h2>
+                
+                <div class="guide-content">
+                    <div class="guide-image-full">
+                        <img src="images/watering-can.webp" alt="浇水壶" onerror="handleMissingImage(this)">
+                    </div>
+                    <div class="guide-text">
+                        <h4>浇水壶的选择与使用</h4>
+                        <ul>
+                            <li><strong>壶嘴设计：</strong>选择带长壶嘴的浇水壶，可以精准控制水流方向</li>
+                            <li><strong>容量选择：</strong>室内小盆栽选择1-2升容量，室外大植物选择5升以上</li>
+                            <li><strong>材质：</strong>塑料材质轻便耐用，金属材质更美观但较重</li>
+                            <li><strong>喷头选择：</strong>可调节喷头适合不同浇水需求，细雾状适合叶面喷水</li>
+                            <li><strong>清洁保养：</strong>定期清洗防止细菌滋生，存放时保持干燥</li>
+                        </ul>
+                        
+                        <h4 style="margin-top: 2rem;">使用技巧</h4>
+                        <ul>
+                            <li>沿盆边缓慢浇水，避免直接冲刷植株根部</li>
+                            <li>早晨或傍晚浇水，避免中午高温时段</li>
+                            <li>浇水要透，直到盆底有水流出为止</li>
+                            <li>多肉植物等耐旱品种要减少浇水频率</li>
+                            <li>使用室温水，避免冷水刺激植物根系</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="guide-section">
+                <h3>相关推荐</h3>
+                <div class="tools-grid">
+                    <div class="tool-item">
+                        <a href="tool-detail-scissors.html" class="tool-link">
+                            <div class="tool-icon">✂️</div>
+                            <div class="tool-info">
+                                <h4>园艺剪刀</h4>
+                                <p>专业修剪工具，保持植物健康生长</p>
+                                <span class="tool-detail-link">查看使用指南 →</span>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="tool-item">
+                        <a href="tool-detail-moisture-meter.html" class="tool-link">
+                            <div class="tool-icon">🌡️</div>
+                            <div class="tool-info">
+                                <h4>土壤湿度计</h4>
+                                <p>精准测量土壤湿度，科学浇水</p>
+                                <span class="tool-detail-link">查看使用指南 →</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="copyright">© 2025 花卉百科 版权所有</div>
+            <div class="social-links">
+                <a href="#">微信</a>
+                <a href="#">微博</a>
+                <a href="#">抖音</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        function handleMissingImage(img) {
+            const altText = img.alt || '工具图片';
+            const color = '4a7c59';
+            img.src = `https://via.placeholder.com/600x400/${color}/ffffff?text=${encodeURIComponent(altText)}`;
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const images = document.querySelectorAll('img');
+            images.forEach(img => {
+                if (!img.complete || img.naturalHeight === 0) {
+                    handleMissingImage(img);
+                }
+                img.addEventListener('error', function() {
+                    handleMissingImage(this);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

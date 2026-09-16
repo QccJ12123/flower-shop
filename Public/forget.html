@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>忘记密码 - 花卉百科</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Microsoft YaHei', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f8fdf8 0%, #f0f9f0 50%, #e8f5e8 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .forget-container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(45, 80, 22, 0.15);
+      overflow: hidden;
+      width: 100%;
+      max-width: 450px;
+      border: 1px solid #e8f5e8;
+    }
+
+    .forget-header {
+      background: linear-gradient(135deg, #2d5016 0%, #4a7c59 100%);
+      color: white;
+      padding: 35px 30px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .forget-header::before {
+      content: '🔑🌿🌸🔒';
+      position: absolute;
+      top: 10px;
+      left: 0;
+      right: 0;
+      font-size: 1.5rem;
+      opacity: 0.3;
+    }
+
+    .forget-header h1 {
+      font-size: 1.8rem;
+      margin-bottom: 8px;
+      font-weight: 300;
+      position: relative;
+    }
+
+    .forget-header p {
+      opacity: 0.9;
+      font-size: 1rem;
+    }
+
+    .forget-form {
+      padding: 35px 30px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      color: #2d5016;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e8f5e8;
+      border-radius: 10px;
+      font-size: 15px;
+      transition: all 0.3s ease;
+      background: #f8fdf8;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #2d5016;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(45, 80, 22, 0.1);
+    }
+
+    .tip {
+      color: #7a9c6b;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+
+    .reset-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #2d5016 0%, #4a7c59 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+
+    .reset-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(45, 80, 22, 0.3);
+      background: linear-gradient(135deg, #4a7c59 0%, #5d9c47 100%);
+    }
+
+    .back-links {
+      text-align: center;
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .back-links a {
+      color: #4a7c59;
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.3s ease;
+      padding: 6px 12px;
+      border-radius: 6px;
+    }
+
+    .back-links a:hover {
+      color: #2d5016;
+      background: rgba(45, 80, 22, 0.1);
+    }
+
+    @media (max-width: 480px) {
+      .forget-container {
+        margin: 10px;
+      }
+      
+      .forget-header {
+        padding: 25px 20px;
+      }
+      
+      .forget-form {
+        padding: 25px 20px;
+      }
+      
+      .forget-header h1 {
+        font-size: 1.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="forget-container">
+    <div class="forget-header">
+      <h1>🔑 重置密码</h1>
+      <p>通过注册信息找回您的账号</p>
+    </div>
+
+    <form class="forget-form" action="/forget" method="post">
+      <div class="form-group">
+        <label for="username">用户名</label>
+        <input type="text" id="username" name="username" placeholder="请输入用户名" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">注册邮箱</label>
+        <input type="email" id="email" name="email" placeholder="请输入注册邮箱" required>
+      </div>
+
+      <div class="form-group">
+        <label for="newpassword">新密码</label>
+        <input type="password" id="newpassword" name="newpassword" placeholder="请输入新密码" required>
+        <div class="tip">≥6位，含大写字母和数字</div>
+      </div>
+
+      <button type="submit" class="reset-btn">确认修改</button>
+
+      <div class="back-links">
+        <a href="login.html">← 返回登录</a>
+        <a href="../index.html">← 返回网站首页</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

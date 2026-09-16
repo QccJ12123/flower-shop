@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>花卉网站 - 首页</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- 添加 Font Awesome 图标库 -->
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 新增样式用于垂直排列分类卡片 */
+        .category-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .category-list-item {
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .category-list-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        
+        .category-list-item img {
+            width: 200px;
+            height: 150px;
+            object-fit: cover;
+        }
+        
+        .category-list-info {
+            flex: 1;
+            padding: 20px;
+        }
+        
+        .category-list-info h4 {
+            margin: 0 0 10px 0;
+            font-size: 1.5rem;
+            color: #2d5016;
+        }
+        
+        @media (max-width: 768px) {
+            .category-list-item {
+                flex-direction: column;
+            }
+            
+            .category-list-item img {
+                width: 100%;
+                height: 200px;
+            }
+        }
+        
+        /* 新增购物车相关样式 */
+        .cart-icon-container {
+            position: relative;
+            margin-left: 20px;
+        }
+        
+        .cart-icon {
+            color: #2d5016;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .cart-icon:hover {
+            color: #27ae60;
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #e74c3c;
+            color: white;
+            font-size: 0.8rem;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+            display: none; /* 默认隐藏 */
+        }
+        
+        /* 添加购物车按钮样式 */
+        .add-to-cart-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            margin-top: 1rem;
+            width: 100%;
+            font-weight: 500;
+        }
+        
+        .add-to-cart-btn:hover {
+            background: #219653;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(39, 174, 96, 0.3);
+        }
+        
+        .add-to-cart-btn.added {
+            background: #3498db;
+        }
+        
+        .add-to-cart-btn.added:hover {
+            background: #2980b9;
+        }
+        
+        .add-to-cart-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* 价格显示样式 */
+        .flower-price {
+            color: #e74c3c;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .flower-stock {
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        
+        .stock-available {
+            color: #27ae60;
+        }
+        
+        .stock-low {
+            color: #f39c12;
+        }
+        
+        .stock-out {
+            color: #e74c3c;
+        }
+        
+        /* 购物车弹窗 */
+        .cart-notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            padding: 20px;
+            z-index: 1000;
+            min-width: 300px;
+            transform: translateX(120%);
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        .cart-notification.show {
+            transform: translateX(0);
+        }
+        
+        .cart-notification-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .cart-notification-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .cart-notification-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .cart-notification-info {
+            flex: 1;
+        }
+        
+        .cart-notification-info h5 {
+            margin: 0 0 5px 0;
+            color: #2d5016;
+        }
+        
+        .cart-notification-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            gap: 10px;
+        }
+        
+        .btn-view-cart {
+            flex: 1;
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        .btn-continue {
+            flex: 1;
+            background: #2d5016;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>花卉百科</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="active">首页</a></li>
+                <li><a href="categories.html">花卉分类</a></li>
+                <li><a href="care-guide.html">养护指南</a></li>
+                <li><a href="about.html">关于我们</a></li>
+                <li><a href="login.html">个人中心</a></li>
+                <!-- 添加购物车图标 -->
+                <li class="cart-icon-container" id="navCart">
+                    <a href="cart.html" class="cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 购物车添加成功通知 -->
+    <div class="cart-notification" id="cartNotification">
+        <div class="cart-notification-content">
+            <div class="cart-notification-image">
+                <img id="notificationImage" src="" alt="" onerror="handleNotificationImageError(this)">
+            </div>
+            <div class="cart-notification-info">
+                <h5 id="notificationTitle">商品已加入购物车</h5>
+                <p id="notificationCount">购物车已有 <span id="cartItemCount">0</span> 件商品</p>
+            </div>
+        </div>
+        <div class="cart-notification-actions">
+            <a href="cart.html" class="btn-view-cart">
+                <i class="fas fa-shopping-cart"></i> 查看购物车
+            </a>
+            <button class="btn-continue" onclick="closeCartNotification()">
+                继续购物
+            </button>
+        </div>
+    </div>
+
+    <!-- 英雄区 -->
+    <section class="hero">
+        <div class="hero-content">
+            <h2>探索花卉的美丽世界</h2>
+            <p>发现各类花卉的魅力与养护技巧</p>
+        </div>
+    </section>
+
+    <!-- 精选花卉区（调整到前面） -->
+    <section class="featured-flowers">
+        <div class="container">
+            <h2 class="section-title">精选花卉</h2>
+            <p class="section-subtitle">备受喜爱的热门花卉</p>
+            <div class="flower-grid">
+                <!-- 玫瑰 -->
+                <div class="flower-card">
+                    <img src="images/flowers/rose.avif" alt="玫瑰" onerror="handleMissingImage(this)">
+                    <div class="flower-info">
+                        <h4>玫瑰</h4>
+                        <p class="scientific-name">Rosa rugosa</p>
+                        <p class="flower-language">爱情、美丽、热情</p>
+                        <div class="tags">
+                            <span class="tag color">红/粉/白</span>
+                            <span class="tag season">5-9月</span>
+                        </div>
+                        <div class="flower-price">¥58.00</div>
+                        <div class="flower-stock stock-available">库存充足</div>
+                        <!-- 添加购物车按钮 -->
+                        <button class="add-to-cart-btn" onclick="addToCart(1, '玫瑰', 'Rosa rugosa', '爱情、美丽、热情', 58.00, 'images/flowers/rose.avif', '红/粉/白', '5-9月', 50)">
+                            <i class="fas fa-cart-plus"></i>
+                            加入购物车
+                        </button>
+                    </div>
+                </div>
+                <!-- 郁金香 -->
+                <div class="flower-card">
+                    <img src="images/flowers/tulip.avif" alt="郁金香" onerror="handleMissingImage(this)">
+                    <div class="flower-info">
+                        <h4>郁金香</h4>
+                        <p class="scientific-name">Tulipa gesneriana</p>
+                        <p class="flower-language">优雅、高贵、祝福</p>
+                        <div class="tags">
+                            <span class="tag color">红/黄/紫</span>
+                            <span class="tag season">3-5月</span>
+                        </div>
+                        <div class="flower-price">¥42.00</div>
+                        <div class="flower-stock stock-available">库存充足</div>
+                        <button class="add-to-cart-btn" onclick="addToCart(2, '郁金香', 'Tulipa gesneriana', '优雅、高贵、祝福', 42.00, 'images/flowers/tulip.avif', '红/黄/紫', '3-5月', 30)">
+                            <i class="fas fa-cart-plus"></i>
+                            加入购物车
+                        </button>
+                    </div>
+                </div>
+                <!-- 百合 -->
+                <div class="flower-card">
+                    <img src="images/flowers/lily.avif" alt="百合" onerror="handleMissingImage(this)">
+                    <div class="flower-info">
+                        <h4>百合</h4>
+                        <p class="scientific-name">Lilium brownii</p>
+                        <p class="flower-language">纯洁、高雅、顺利</p>
+                        <div class="tags">
+                            <span class="tag color">白/粉/黄</span>
+                            <span class="tag season">6-8月</span>
+                        </div>
+                        <div class="flower-price">¥38.00</div>
+                        <div class="flower-stock stock-low">仅剩 5 件</div>
+                        <button class="add-to-cart-btn" onclick="addToCart(3, '百合', 'Lilium brownii', '纯洁、高雅、顺利', 38.00, 'images/flowers/lily.avif', '白/粉/黄', '6-8月', 5)">
+                            <i class="fas fa-cart-plus"></i>
+                            加入购物车
+                        </button>
+                    </div>
+                </div>
+                <!-- 兰花 -->
+                <div class="flower-card">
+                    <img src="images/flowers/orchid.jpg" alt="兰花" onerror="handleMissingImage(this)">
+                    <div class="flower-info">
+                        <h4>兰花</h4>
+                        <p class="scientific-name">Cymbidium spp.</p>
+                        <p class="flower-language">高洁、典雅、淡泊</p>
+                        <div class="tags">
+                            <span class="tag color">白/紫/粉</span>
+                            <span class="tag season">1-3月</span>
+                        </div>
+                        <div class="flower-price">¥128.00</div>
+                        <div class="flower-stock stock-available">库存充足</div>
+                        <button class="add-to-cart-btn" onclick="addToCart(4, '兰花', 'Cymbidium spp.', '高洁、典雅、淡泊', 128.00, 'images/flowers/orchid.jpg', '白/紫/粉', '1-3月', 15)">
+                            <i class="fas fa-cart-plus"></i>
+                            加入购物车
+                        </button>
+                    </div>
+                </div>
+                <!-- 牡丹 -->
+                <div class="flower-card">
+                    <img src="images/flowers/peony.avif" alt="牡丹" onerror="handleMissingImage(this)">
+                    <div class="flower-info">
+                        <h4>牡丹</h4>
+                        <p class="scientific-name">Paeonia suffruticosa</p>
+                        <p class="flower-language">富贵、吉祥、圆满</p>
+                        <div class="tags">
+                            <span class="tag color">红/粉/白</span>
+                            <span class="tag season">4-5月</span>
+                        </div>
+                        <div class="flower-price">¥88.00</div>
+                        <div class="flower-stock stock-available">库存充足</div>
+                        <button class="add-to-cart-btn" onclick="addToCart(5, '牡丹', 'Paeonia suffruticosa', '富贵、吉祥、圆满', 88.00, 'images/flowers/peony.avif', '红/粉/白', '4-5月', 25)">
+                            <i class="fas fa-cart-plus"></i>
+                            加入购物车
+                        </button>
+                    </div>
+                </div>
+                <!-- 向日葵 -->
+                <div class="flower-card">
+                    <img src="images/flowers/sunflower.avif" alt="向日葵" onerror="handleMissingImage(this)">
+                    <div class="flower-info">
+                        <h4>向日葵</h4>
+                        <p class="scientific-name">Helianthus annuus</p>
+                        <p class="flower-language">阳光、勇敢、忠诚</p>
+                        <div class="tags">
+                            <span class="tag color">黄</span>
+                            <span class="tag season">7-9月</span>
+                        </div>
+                        <div class="flower-price">¥32.00</div>
+                        <div class="flower-stock stock-out">暂时缺货</div>
+                        <button class="add-to-cart-btn" disabled>
+                            <i class="fas fa-ban"></i>
+                            暂时缺货
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 花卉分类区（调整到后面，改为垂直排列） -->
+    <section class="categories-section">
+        <div class="container">
+            <h2 class="section-title">花卉分类</h2>
+            <p class="section-subtitle">按季节探索不同花卉</p>
+            <div class="category-list">
+                <!-- 春季花卉 -->
+                <div class="category-list-item">
+                    <img src="images/spring.jpg" alt="春季花卉" onerror="handleMissingImage(this)">
+                    <div class="category-list-info">
+                        <h4>春季花卉</h4>
+                        <div class="tags">
+                            <span class="tag season">3-5月</span>
+                            <span class="tag type">球根类</span>
+                        </div>
+                        <p>春季是万物复苏的季节，郁金香、水仙、风信子等球根花卉盛开，带来生机勃勃的景象。</p>
+                    </div>
+                </div>
+                <!-- 夏季花卉 -->
+                <div class="category-list-item">
+                    <img src="images/summer.jpg" alt="夏季花卉" onerror="handleMissingImage(this)">
+                    <div class="category-list-info">
+                        <h4>夏季花卉</h4>
+                        <div class="tags">
+                            <span class="tag season">6-8月</span>
+                            <span class="tag type">草本类</span>
+                        </div>
+                        <p>夏季花卉以草本植物为主，如玫瑰、百合、向日葵等，色彩鲜艳，生命力旺盛。</p>
+                    </div>
+                </div>
+                <!-- 秋季花卉 -->
+                <div class="category-list-item">
+                    <img src="images/autumn.jpg" alt="秋季花卉" onerror="handleMissingImage(this)">
+                    <div class="category-list-info">
+                        <h4>秋季花卉</h4>
+                        <div class="tags">
+                            <span class="tag season">9-11月</span>
+                            <span class="tag type">菊科类</span>
+                        </div>
+                        <p>秋季以菊花、桂花等为代表，花色温暖，香气袭人，象征着收获与成熟。</p>
+                    </div>
+                </div>
+                <!-- 冬季花卉 -->
+                <div class="category-list-item">
+                    <img src="images/winter.jpg" alt="冬季花卉" onerror="handleMissingImage(this)">
+                    <div class="category-list-info">
+                        <h4>冬季花卉</h4>
+                        <div class="tags">
+                            <span class="tag season">12-2月</span>
+                            <span class="tag type">耐寒类</span>
+                        </div>
+                        <p>冬季花卉如梅花、兰花、仙客来等，不畏严寒，在寒冷季节中绽放独特魅力。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="copyright">© 2025 花卉百科 版权所有</div>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-weixin"></i> 微信</a>
+                <a href="#"><i class="fab fa-weibo"></i> 微博</a>
+                <a href="#"><i class="fab fa-tiktok"></i> 抖音</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // 图片错误处理函数
+        function handleMissingImage(img) {
+            const altText = img.alt || '花卉图片';
+            const placeholderColors = {
+                '玫瑰': 'ff6b6b', '郁金香': '74b9ff', '百合': 'a29bfe', '兰花': '55efc4',
+                '牡丹': 'fd79a8', '向日葵': 'fdcb6e', '春季花卉': '55efc4', '夏季花卉': '74b9ff',
+                '秋季花卉': 'e17055', '冬季花卉': 'a29bfe'
+            };
+            const color = placeholderColors[altText] || '2d5016';
+            img.src = `https://via.placeholder.com/300x200/${color}/ffffff?text=${encodeURIComponent(altText)}`;
+        }
+        
+        // 通知弹窗图片错误处理
+        function handleNotificationImageError(img) {
+            const flowerName = img.alt || '花卉';
+            const svg = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60">
+                    <rect width="100%" height="100%" fill="#2d5016"/>
+                    <text x="50%" y="50%" text-anchor="middle" dy=".3em" 
+                          fill="white" font-family="Arial" font-size="12">
+                        ${flowerName}
+                    </text>
+                </svg>
+            `;
+            img.src = 'data:image/svg+xml;base64,' + btoa(svg);
+        }
+        
+        // 关闭购物车通知
+        function closeCartNotification() {
+            const notification = document.getElementById('cartNotification');
+            notification.classList.remove('show');
+        }
+        
+        // 显示购物车通知
+        function showCartNotification(productName, productImage, cartCount) {
+            // 更新通知内容
+            const notificationTitle = document.getElementById('notificationTitle');
+            const notificationImage = document.getElementById('notificationImage');
+            const cartItemCount = document.getElementById('cartItemCount');
+            
+            if (notificationTitle) notificationTitle.textContent = `${productName} 已加入购物车`;
+            if (cartItemCount) cartItemCount.textContent = cartCount;
+            
+            // 设置图片
+            if (notificationImage && productImage) {
+                notificationImage.src = productImage;
+                notificationImage.alt = productName;
+            }
+            
+            // 显示通知
+            const notification = document.getElementById('cartNotification');
+            if (notification) {
+                notification.classList.add('show');
+                
+                // 5秒后自动关闭
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 5000);
+            }
+        }
+        
+        // 搜索回车键处理
+        function handleSearchKeypress(event) {
+            if (event.key === 'Enter') {
+                performSearch();
+            }
+        }
+        
+        // 更新购物车数量显示
+        function updateCartCountDisplay() {
+            const cartCountElement = document.getElementById('cartCount');
+            if (cartCountElement) {
+                try {
+                    const savedCart = localStorage.getItem('flowerCart');
+                    if (savedCart) {
+                        const cartItems = JSON.parse(savedCart);
+                        const count = cartItems.reduce((total, item) => total + item.quantity, 0);
+                        cartCountElement.textContent = count;
+                        cartCountElement.style.display = count > 0 ? 'flex' : 'none';
+                        return count;
+                    } else {
+                        cartCountElement.style.display = 'none';
+                        return 0;
+                    }
+                } catch (e) {
+                    cartCountElement.style.display = 'none';
+                    return 0;
+                }
+            }
+            return 0;
+        }
+        
+        // 添加到购物车函数
+        function addToCart(id, name, scientificName, language, price, image, color, season, stock) {
+            // 检查库存
+            if (stock <= 0) {
+                alert(`${name} 已售罄，请选择其他花卉`);
+                return;
+            }
+            
+            // 获取购物车数据
+            let cart = JSON.parse(localStorage.getItem('flowerCart') || '[]');
+            
+            // 检查是否已存在
+            const existingItem = cart.find(item => item.id === id);
+            
+            if (existingItem) {
+                // 检查库存是否足够
+                if (existingItem.quantity >= stock) {
+                    alert(`最多只能购买 ${stock} 件 ${name}`);
+                    return;
+                }
+                existingItem.quantity++;
+            } else {
+                // 添加新商品
+                cart.push({
+                    id: id,
+                    name: name,
+                    scientificName: scientificName,
+                    language: language,
+                    price: price,
+                    image: image,
+                    color: color,
+                    season: season,
+                    quantity: 1,
+                    stock: stock
+                });
+            }
+            
+            // 保存到本地存储
+            localStorage.setItem('flowerCart', JSON.stringify(cart));
+            
+            // 更新购物车数量显示
+            const cartCount = updateCartCountDisplay();
+            
+            // 触发storage事件，让其他页面也能更新购物车数量
+            window.dispatchEvent(new Event('storage'));
+            
+            // 显示通知弹窗
+            showCartNotification(name, image, cartCount);
+            
+            // 添加按钮反馈效果
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check"></i> 已添加';
+            button.classList.add('added');
+            
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.classList.remove('added');
+            }, 2000);
+        }
+        
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            // 处理缺失的图片
+            const images = document.querySelectorAll('img');
+            images.forEach(img => {
+                if (!img.complete || img.naturalHeight === 0) {
+                    handleMissingImage(img);
+                }
+                img.addEventListener('error', function() {
+                    handleMissingImage(this);
+                });
+            });
+            
+            // 更新购物车数量显示
+            updateCartCountDisplay();
+            
+            // 监听购物车变化（当其他页面修改购物车时）
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'flowerCart') {
+                    updateCartCountDisplay();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>注册 - 花卉百科</title>
+  <style>
+    /* 保持原有的CSS样式不变 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Microsoft YaHei', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f8fdf8 0%, #f0f9f0 50%, #e8f5e8 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .register-container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(45, 80, 22, 0.15);
+      overflow: hidden;
+      width: 100%;
+      max-width: 480px;
+      border: 1px solid #e8f5e8;
+    }
+
+    .register-header {
+      background: linear-gradient(135deg, #2d5016 0%, #4a7c59 100%);
+      color: white;
+      padding: 35px 30px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .register-header::before {
+      content: '🌱🌸🌿🌺🍃';
+      position: absolute;
+      top: 10px;
+      left: 0;
+      right: 0;
+      font-size: 1.5rem;
+      opacity: 0.3;
+    }
+
+    .register-header h1 {
+      font-size: 2rem;
+      margin-bottom: 8px;
+      font-weight: 300;
+      position: relative;
+    }
+
+    .register-header p {
+      opacity: 0.9;
+      font-size: 1rem;
+    }
+
+    .register-form {
+      padding: 35px 30px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      color: #2d5016;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e8f5e8;
+      border-radius: 10px;
+      font-size: 15px;
+      transition: all 0.3s ease;
+      background: #f8fdf8;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #2d5016;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(45, 80, 22, 0.1);
+    }
+
+    .tip {
+      color: #7a9c6b;
+      font-size: 12px;
+      margin-top: 5px;
+      margin-left: 0;
+    }
+
+    .tip.valid {
+      color: #2d5016;
+    }
+
+    .tip.invalid {
+      color: #c33;
+    }
+
+    .register-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #2d5016 0%, #4a7c59 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+
+    .register-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(45, 80, 22, 0.3);
+      background: linear-gradient(135deg, #4a7c59 0%, #5d9c47 100%);
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: 20px;
+      color: #7a9c6b;
+    }
+
+    .login-link a {
+      color: #4a7c59;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    .login-link a:hover {
+      color: #2d5016;
+      text-decoration: underline;
+    }
+
+    .back-to-home {
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    .back-to-home a {
+      color: #7a9c6b;
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.3s ease;
+    }
+
+    .back-to-home a:hover {
+      color: #2d5016;
+    }
+
+    .error-message {
+      background: #fee;
+      color: #c33;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 14px;
+      display: none;
+      border: 1px solid #fcc;
+    }
+
+    .success-message {
+      background: #f0f9f0;
+      color: #2d5016;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 14px;
+      display: none;
+      border: 1px solid #c8e6c9;
+    }
+
+    @media (max-width: 480px) {
+      .register-container {
+        margin: 10px;
+      }
+      
+      .register-header {
+        padding: 25px 20px;
+      }
+      
+      .register-form {
+        padding: 25px 20px;
+      }
+      
+      .register-header h1 {
+        font-size: 1.7rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="register-container">
+    <div class="register-header">
+      <h1>🌺 注册账号</h1>
+      <p>加入花卉百科，探索植物世界</p>
+    </div>
+
+    <div class="error-message" id="errorMessage"></div>
+    <div class="success-message" id="successMessage"></div>
+
+    <form class="login-form" id="registerForm" action="register" method="post">
+      <div class="form-group">
+        <label for="name">真实姓名</label>
+        <input type="text" id="name" name="name" placeholder="请输入您的真实姓名" required>
+        <div class="tip">2-20个字符，支持中文</div>
+      </div>
+
+      <div class="form-group">
+        <label for="username">用户名</label>
+        <input type="text" id="username" name="username" placeholder="请输入用户名（用于登录）" required>
+        <div class="tip" id="usernameTip">2-20个字符，支持中文、英文、数字</div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">密码</label>
+        <input type="password" id="password" name="password" placeholder="请输入密码" required>
+        <div class="tip" id="passwordTip">≥6位，必须包含大写字母和数字</div>
+      </div>
+
+      <div class="form-group">
+        <label for="repassword">确认密码</label>
+        <input type="password" id="repassword" name="repassword" placeholder="请再次输入密码" required>
+        <div class="tip" id="repasswordTip">请再次输入密码</div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">邮箱</label>
+        <input type="email" id="email" name="email" placeholder="请输入邮箱地址" required>
+        <div class="tip">用于找回密码和接收通知</div>
+      </div>
+
+      <div class="form-group">
+        <label for="age">年龄</label>
+        <input type="number" id="age" name="age" placeholder="请输入年龄" min="1" max="149" required>
+        <div class="tip">1-149岁之间</div>
+      </div>
+
+      <button type="submit" class="register-btn">注册</button>
+
+      <div class="login-link">
+        已有账号？<a href="login.html">立即登录</a>
+      </div>
+    </form>
+
+    <div class="back-to-home">
+      <a href="index.html">← 返回网站首页</a>
+    </div>
+  </div>
+
+  <script>
+    // 智能注册处理
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+      e.preventDefault(); // 阻止默认提交
+      
+      const name = document.getElementById('name').value;
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const repassword = document.getElementById('repassword').value;
+      const email = document.getElementById('email').value;
+      const age = document.getElementById('age').value;
+      
+      const errorMessage = document.getElementById('errorMessage');
+      const successMessage = document.getElementById('successMessage');
+      
+      // 隐藏所有消息
+      errorMessage.style.display = 'none';
+      successMessage.style.display = 'none';
+      
+      // 客户端验证
+      const errors = [];
+      
+      // 真实姓名验证：2-20字符
+      if (!name || name.length < 2 || name.length > 20) {
+        errors.push('真实姓名需2-20个字符');
+      }
+      
+      // 用户名验证：2-20字符（修改为更宽松的规则）
+      if (!username || username.length < 2 || username.length > 20) {
+        errors.push('用户名需2-20个字符（中文、英文、数字均可）');
+      }
+      
+      // 密码验证
+      if (!password || password.length < 6 || !/[A-Z]/.test(password) || !/[0-9]/.test(password)) {
+        errors.push('密码需≥6位且必须包含大写字母和数字');
+      }
+      if (password !== repassword) {
+        errors.push('两次输入的密码不一致');
+      }
+      
+      // 邮箱验证
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        errors.push('请输入有效的邮箱地址');
+      }
+      
+      // 年龄验证
+      if (!age || isNaN(age) || age < 1 || age > 149) {
+        errors.push('年龄需在1-149岁之间');
+      }
+      
+      if (errors.length > 0) {
+        errorMessage.textContent = errors.join('\n');
+        errorMessage.style.display = 'block';
+        return;
+      }
+      
+      // 检查当前环境
+      const isServerEnvironment = window.location.protocol === 'http:' || window.location.protocol === 'https:';
+      const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      
+      if (isServerEnvironment && isLocalhost) {
+        // 服务器环境：正常提交到后端
+        console.log('服务器环境，提交到后端注册');
+        this.action = '/register';
+        this.method = 'post';
+        this.submit();
+      } else {
+        // 文件环境或非本地服务器：模拟注册
+        console.log('文件环境，模拟注册');
+        simulateRegister(name, username, password, email, age);
+      }
+    });
+    
+    // 模拟注册函数
+    function simulateRegister(name, username, password, email, age) {
+      const errorMessage = document.getElementById('errorMessage');
+      const successMessage = document.getElementById('successMessage');
+      
+      // 模拟注册成功
+      successMessage.textContent = `注册成功！欢迎 ${name} 加入花卉百科！正在跳转到登录页...`;
+      successMessage.style.display = 'block';
+      
+      // 保存到本地存储（模拟数据库）
+      const userData = {
+        name: name,
+        username: username,
+        password: password,
+        email: email,
+        age: parseInt(age),
+        registerTime: new Date().toISOString()
+      };
+      
+      // 保存到 localStorage
+      let users = JSON.parse(localStorage.getItem('flowerUsers') || '[]');
+      
+      // 检查用户名是否已存在
+      const existingUser = users.find(user => user.username === username);
+      if (existingUser) {
+        errorMessage.textContent = '用户名已存在，请选择其他用户名';
+        errorMessage.style.display = 'block';
+        return;
+      }
+      
+      users.push(userData);
+      localStorage.setItem('flowerUsers', JSON.stringify(users));
+      
+      console.log('模拟注册成功，用户数据已保存:', userData);
+      
+      // 3秒后跳转到登录页
+      setTimeout(() => {
+        if (window.location.pathname.includes('/Public/')) {
+          window.location.href = 'login.html';
+        } else {
+          window.location.href = 'login.html';
+        }
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

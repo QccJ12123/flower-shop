@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>关于我们 - 花卉网站</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- 添加 Font Awesome 图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 购物车相关样式 */
+        .cart-icon-container {
+            position: relative;
+            margin-left: 20px;
+        }
+        
+        .cart-icon {
+            color: #2d5016;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .cart-icon:hover {
+            color: #27ae60;
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #e74c3c;
+            color: white;
+            font-size: 0.8rem;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+        }
+        
+        /* 图片占位符样式 */
+        .missing-image-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>花卉百科</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="categories.html">花卉分类</a></li>
+                <li><a href="care-guide.html">养护指南</a></li>
+                <li><a href="about.html" class="active">关于我们</a></li>
+                <li><a href="login.html">个人中心</a></li>
+                <!-- 购物车图标 -->
+                <li class="cart-icon-container" id="navCart">
+                    <a href="cart.html" class="cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 英雄区 -->
+    <section class="hero">
+        <div class="hero-content">
+            <h2>关于我们</h2>
+            <p>传递花卉之美，分享养护知识</p>
+        </div>
+    </section>
+
+    <!-- 关于我们内容 -->
+    <section class="about-page">
+        <div class="container">
+            <!-- 使命愿景 -->
+            <div class="mission-section">
+                <div class="mission-text">
+                    <h3>我们的使命</h3>
+                    <p>花卉百科成立于2018年，是一家专注于花卉知识传播与养护技术分享的平台。我们致力于为花卉爱好者提供全面、专业、实用的花卉信息，包括花卉分类、品种介绍、养护技巧、病虫害防治等内容。</p>
+                    <p>我们相信，花卉不仅能美化环境，更能治愈心灵。通过我们的努力，让更多人爱上花卉、学会养护，让花卉走进千家万户，为生活增添色彩与生机。</p>
+                    <button class="btn btn-primary">加入我们</button>
+                </div>
+                <div class="mission-image">
+                    <img src="images/about-mission.jpg" alt="我们的使命" onerror="handleMissingImage(this)">
+                </div>
+            </div>
+
+            <!-- 核心特色 -->
+            <div class="content-section">
+                <h3>核心特色</h3>
+                <div class="content-grid">
+                    <div class="content-item">
+                        <div class="content-icon">📚</div>
+                        <div class="content-info">
+                            <h4>专业知识</h4>
+                            <p>由园艺专家、花卉培育师共同编撰，内容科学准确</p>
+                        </div>
+                    </div>
+                    <div class="content-item">
+                        <div class="content-icon">🌐</div>
+                        <div class="content-info">
+                            <h4>全面覆盖</h4>
+                            <p>涵盖千余种花卉品种，从常见花卉到珍稀品种</p>
+                        </div>
+                    </div>
+                    <div class="content-item">
+                        <div class="content-icon">💡</div>
+                        <div class="content-info">
+                            <h4>实用技巧</h4>
+                            <p>提供简单易懂的养护方法，新手也能轻松上手</p>
+                        </div>
+                    </div>
+                    <div class="content-item">
+                        <div class="content-icon">🤝</div>
+                        <div class="content-info">
+                            <h4>社区互动</h4>
+                            <p>花卉爱好者交流平台，分享经验、解答疑问</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 平台数据统计 -->
+            <div class="content-section">
+                <h3>平台数据</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number">1000+</div>
+                        <div class="stat-label">花卉品种</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">5000+</div>
+                        <div class="stat-label">养护文章</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">10万+</div>
+                        <div class="stat-label">注册用户</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">50万+</div>
+                        <div class="stat-label">月访问量</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 发展历程 -->
+            <div class="content-section">
+                <h3>发展历程</h3>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-year">2018</div>
+                        <div class="timeline-content">
+                            <h4>平台成立</h4>
+                            <p>花卉百科正式上线，初期收录500余种常见花卉信息</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">2020</div>
+                        <div class="timeline-content">
+                            <h4>内容升级</h4>
+                            <p>推出专业养护指南板块，邀请园艺专家加入团队</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">2022</div>
+                        <div class="timeline-content">
+                            <h4>社区上线</h4>
+                            <p>开通花卉爱好者交流社区，注册用户突破10万人</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">2024</div>
+                        <div class="timeline-content">
+                            <h4>平台拓展</h4>
+                            <p>新增视频教程、线上课程等功能，打造全方位花卉知识平台</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 合作伙伴 -->
+            <div class="content-section">
+                <h3>合作伙伴</h3>
+                <div class="partners-grid">
+                    <div class="partner-item">
+                        <div class="partner-logo">🌿</div>
+                        <div class="partner-info">
+                            <h4>中国园艺协会</h4>
+                            <p>专业园艺机构合作，提供权威技术指导</p>
+                        </div>
+                    </div>
+                    <div class="partner-item">
+                        <div class="partner-logo">🏛️</div>
+                        <div class="partner-info">
+                            <h4>植物研究所</h4>
+                            <p>科研机构合作，推动花卉品种研究</p>
+                        </div>
+                    </div>
+                    <div class="partner-item">
+                        <div class="partner-logo">🎓</div>
+                        <div class="partner-info">
+                            <h4>农业大学</h4>
+                            <p>高校合作，培养专业园艺人才</p>
+                        </div>
+                    </div>
+                    <div class="partner-item">
+                        <div class="partner-logo">🏡</div>
+                        <div class="partner-info">
+                            <h4>花卉基地</h4>
+                            <p>种植基地合作，推广优质花卉品种</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 用户评价 -->
+            <div class="testimonials-section">
+                <h3>用户评价</h3>
+                <div class="testimonials-grid">
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>"作为花卉新手，这个平台帮了我大忙！养护指南非常详细，按照上面的方法，我的玫瑰已经开花了，太开心了！"</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <strong>张先生</strong>
+                            <span>花卉爱好者 · 1年</span>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>"平台上的花卉品种介绍很全面，我想找的珍稀兰花资料这里都有，还有专家在线解答疑问，非常专业可靠。"</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <strong>刘女士</strong>
+                            <span>园艺爱好者 · 3年</span>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>"社区板块很活跃，能和全国各地的花友交流经验，还学到了很多实用技巧，现在我家的阳台已经变成小花园了！"</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <strong>王先生</strong>
+                            <span>阳台种植爱好者 · 2年</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 未来规划 -->
+            <div class="future-section">
+                <h3>未来规划</h3>
+                <div class="future-content">
+                    <div class="future-item">
+                        <h4>品种库扩充</h4>
+                        <p>计划收录2000+花卉品种，涵盖国内外常见与珍稀花卉，提供更全面的品种查询服务</p>
+                    </div>
+                    <div class="future-item">
+                        <h4>智能养护工具</h4>
+                        <p>开发花卉养护APP，提供智能浇水提醒、病虫害识别、个性化养护方案等功能</p>
+                    </div>
+                    <div class="future-item">
+                        <h4>线下活动</h4>
+                        <p>举办花卉展览、园艺讲座、种植 workshop 等线下活动，促进花友面对面交流</p>
+                    </div>
+                    <div class="future-item">
+                        <h4>合作共赢</h4>
+                        <p>与花卉基地、园艺机构合作，提供优质花卉种苗推荐与购买渠道，打造花卉产业链服务</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 联系我们部分 -->
+            <div class="contact-section">
+                <h3>联系我们</h3>
+                <div class="contact-grid-with-image">
+                    <!-- 左侧图片 -->
+                    <div class="contact-image-side">
+                        <img src="images/contact-bg.jpg" alt="联系我们 - 花卉百科团队" onerror="handleMissingImage(this)">
+                    </div>
+
+                    <!-- 右侧内容区域 -->
+                    <div class="contact-content-side">
+                        <!-- 联系信息 -->
+                        <div class="contact-info-card">
+                            <h4>联系信息</h4>
+                            <div class="contact-details-enhanced">
+                                <div class="contact-item-enhanced">
+                                    <div class="contact-icon-enhanced">📧</div>
+                                    <div class="contact-text-enhanced">
+                                        <strong>电子邮箱</strong>
+                                        <p>contact@flowerwiki.com<br>support@flowerwiki.com</p>
+                                    </div>
+                                </div>
+                                <div class="contact-item-enhanced">
+                                    <div class="contact-icon-enhanced">📞</div>
+                                    <div class="contact-text-enhanced">
+                                        <strong>客服热线</strong>
+                                        <p>400-123-4567<br>周一至周五 9:00-18:00</p>
+                                    </div>
+                                </div>
+                                <div class="contact-item-enhanced">
+                                    <div class="contact-icon-enhanced">📍</div>
+                                    <div class="contact-text-enhanced">
+                                        <strong>公司地址</strong>
+                                        <p>北京市朝阳区花卉大道123号<br>花卉百科大厦 15层</p>
+                                    </div>
+                                </div>
+                                <div class="contact-item-enhanced">
+                                    <div class="contact-icon-enhanced">🌐</div>
+                                    <div class="contact-text-enhanced">
+                                        <strong>在线服务</strong>
+                                        <p>微信客服：flowerwiki123<br>QQ群：123456789</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="copyright">© 2025 花卉百科 版权所有</div>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-weixin"></i> 微信</a>
+                <a href="#"><i class="fab fa-weibo"></i> 微博</a>
+                <a href="#"><i class="fab fa-tiktok"></i> 抖音</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // 图片错误处理函数
+        function handleMissingImage(img) {
+            const altText = img.alt || '花卉图片';
+            const placeholderColors = {
+                '我们的使命': '2d5016',
+                '联系我们 - 花卉百科团队': '6c5ce7',
+                '春季花卉': '55efc4',
+                '夏季花卉': '74b9ff',
+                '秋季花卉': 'e17055',
+                '冬季花卉': 'a29bfe'
+            };
+            const color = placeholderColors[altText] || '2d5016';
+            img.src = `https://via.placeholder.com/600x400/${color}/ffffff?text=${encodeURIComponent(altText)}`;
+        }
+        
+        // 更新购物车数量
+        function updateCartCount() {
+            const cartCountElement = document.getElementById('cartCount');
+            if (cartCountElement) {
+                try {
+                    const savedCart = localStorage.getItem('flowerCart');
+                    if (savedCart) {
+                        const cartItems = JSON.parse(savedCart);
+                        const count = cartItems.reduce((total, item) => total + item.quantity, 0);
+                        cartCountElement.textContent = count;
+                        cartCountElement.style.display = count > 0 ? 'flex' : 'none';
+                    } else {
+                        cartCountElement.style.display = 'none';
+                    }
+                } catch (e) {
+                    cartCountElement.style.display = 'none';
+                }
+            }
+        }
+        
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            // 处理缺失的图片
+            const images = document.querySelectorAll('img');
+            images.forEach(img => {
+                if (!img.complete || img.naturalHeight === 0) {
+                    handleMissingImage(img);
+                }
+                img.addEventListener('error', function() {
+                    handleMissingImage(this);
+                });
+            });
+            
+            // 更新购物车数量
+            updateCartCount();
+            
+            // 监听购物车变化
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'flowerCart') {
+                    updateCartCount();
+                }
+            });
+            
+            // "加入我们"按钮点击事件
+            const joinButton = document.querySelector('.btn-primary');
+            if (joinButton) {
+                joinButton.addEventListener('click', function() {
+                    alert('感谢您对我们的关注！请将简历发送至 hr@flowerwiki.com，我们期待您的加入！');
+                });
+            }
+        });
+    </script>
+</body>
+</html>

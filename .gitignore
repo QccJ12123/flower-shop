@@ -1,0 +1,15 @@
+# 系统文件
+Thumbs.db
+.DS_Store
+
+# IDE缓存
+.idea/
+.vscode/
+*.log
+
+# 浏览器缓存、临时文件
+*.tmp
+*.bak
+
+# node相关
+node_modules/

@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>花卉分类 - 花卉网站</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- 添加 Font Awesome 图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="js/v2.6.10/vue.js"></script>
+    <style>
+        /* 购物车相关样式 */
+        .cart-icon-container {
+            position: relative;
+            margin-left: 20px;
+        }
+        
+        .cart-icon {
+            color: #2d5016;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .cart-icon:hover {
+            color: #27ae60;
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #e74c3c;
+            color: white;
+            font-size: 0.8rem;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+            display: none;
+        }
+        
+        /* 购物车按钮样式 */
+        .add-to-cart-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            margin-top: 1rem;
+            width: 100%;
+            font-weight: 500;
+        }
+        
+        .add-to-cart-btn:hover {
+            background: #219653;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(39, 174, 96, 0.3);
+        }
+        
+        .add-to-cart-btn.added {
+            background: #3498db;
+        }
+        
+        .add-to-cart-btn.added:hover {
+            background: #2980b9;
+        }
+        
+        .add-to-cart-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* 价格显示样式 */
+        .flower-price {
+            color: #e74c3c;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .flower-stock {
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        
+        .stock-available {
+            color: #27ae60;
+        }
+        
+        .stock-low {
+            color: #f39c12;
+        }
+        
+        .stock-out {
+            color: #e74c3c;
+        }
+        
+        /* 购物车弹窗 */
+        .cart-notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            padding: 20px;
+            z-index: 1000;
+            min-width: 300px;
+            transform: translateX(120%);
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        .cart-notification.show {
+            transform: translateX(0);
+        }
+        
+        .cart-notification-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .cart-notification-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .cart-notification-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .cart-notification-info {
+            flex: 1;
+        }
+        
+        .cart-notification-info h5 {
+            margin: 0 0 5px 0;
+            color: #2d5016;
+        }
+        
+        .cart-notification-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            gap: 10px;
+        }
+        
+        .btn-view-cart {
+            flex: 1;
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        .btn-checkout {
+            flex: 1;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            text-align: center;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        .btn-checkout:hover {
+            background: #c0392b;
+        }
+        
+        .btn-continue {
+            flex: 1;
+            background: #2d5016;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        /* 按钮组样式 */
+        .flower-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+        
+        .flower-actions .add-to-cart-btn {
+            margin-top: 0;
+            flex: 2;
+        }
+        
+        .flower-actions .btn-primary {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        /* 筛选器样式 */
+        .filters-container {
+            background: #f8fdf8;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border: 1px solid #e8f5e8;
+        }
+        
+        .filters {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .filter-group label {
+            font-weight: 600;
+            color: #2d5016;
+            white-space: nowrap;
+        }
+        
+        .filter-group select {
+            padding: 8px 15px;
+            border: 2px solid #d4e6d4;
+            border-radius: 6px;
+            background: white;
+            color: #333;
+            font-size: 14px;
+            min-width: 150px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .filter-group select:hover {
+            border-color: #27ae60;
+        }
+        
+        .filter-group select:focus {
+            outline: none;
+            border-color: #2d5016;
+        }
+        
+        .filter-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .filter-btn {
+            padding: 10px 25px;
+            background: #2d5016;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .filter-btn:hover {
+            background: #27ae60;
+            transform: translateY(-2px);
+        }
+        
+        .reset-btn {
+            padding: 10px 25px;
+            background: #95a5a6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .reset-btn:hover {
+            background: #7f8c8d;
+        }
+        
+        /* 筛选结果信息 */
+        .filter-results {
+            background: #e8f5e8;
+            padding: 12px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid #27ae60;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .filter-results.hidden {
+            display: none;
+        }
+        
+        .filter-results span {
+            color: #2d5016;
+            font-weight: 500;
+        }
+        
+        /* 无结果提示 */
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+            margin: 30px 0;
+        }
+        
+        .no-results i {
+            font-size: 60px;
+            margin-bottom: 20px;
+            color: #ddd;
+        }
+        
+        .no-results h3 {
+            color: #2d5016;
+            margin-bottom: 15px;
+        }
+        
+        /* 搜索框样式 */
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            max-width: 500px;
+        }
+        
+        .search-box input {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid #d4e6d4;
+            border-radius: 30px;
+            font-size: 16px;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: #27ae60;
+        }
+        
+        .search-box button {
+            padding: 12px 25px;
+            background: #2d5016;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .search-box button:hover {
+            background: #27ae60;
+        }
+        
+        /* 花卉网格 */
+        .flower-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .flower-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            border: 1px solid #e8f5e8;
+        }
+        
+        .flower-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        .flower-image-link {
+            display: block;
+            height: 200px;
+            overflow: hidden;
+        }
+        
+        .flower-image-link img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .flower-card:hover .flower-image-link img {
+            transform: scale(1.05);
+        }
+        
+        .flower-info {
+            padding: 20px;
+        }
+        
+        .flower-info h4 {
+            margin: 0 0 5px 0;
+            color: #2d5016;
+            font-size: 1.3rem;
+        }
+        
+        .scientific-name {
+            color: #666;
+            font-style: italic;
+            font-size: 0.9rem;
+            margin: 0 0 10px 0;
+        }
+        
+        .flower-language {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            margin: 0 0 10px 0;
+            font-weight: 500;
+        }
+        
+        .tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        
+        .tag {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .tag.color {
+            background: #ffeaa7;
+            color: #e17055;
+        }
+        
+        .tag.season {
+            background: #a29bfe;
+            color: white;
+        }
+        
+        .tag.type {
+            background: #55efc4;
+            color: #2d5016;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>花卉百科</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="categories.html" class="active">花卉分类</a></li>
+                <li><a href="care-guide.html">养护指南</a></li>
+                <li><a href="about.html">关于我们</a></li>
+                <li><a href="login.html">个人中心</a></li>
+                <!-- 添加购物车图标 -->
+                <li class="cart-icon-container">
+                    <a href="cart.html" class="cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 购物车添加成功通知 -->
+    <div class="cart-notification" id="cartNotification">
+        <div class="cart-notification-content">
+            <div class="cart-notification-image">
+                <img id="notificationImage" src="" alt="" onerror="handleNotificationImageError(this)">
+            </div>
+            <div class="cart-notification-info">
+                <h5 id="notificationTitle">商品已加入购物车</h5>
+                <p id="notificationCount">购物车已有 <span id="cartItemCount">0</span> 件商品</p>
+            </div>
+        </div>
+        <div class="cart-notification-actions">
+            <a href="cart.html" class="btn-view-cart">
+                <i class="fas fa-shopping-cart"></i> 查看购物车
+            </a>
+            <button class="btn-continue" onclick="closeCartNotification()">
+                继续购物
+            </button>
+        </div>
+    </div>
+
+    <!-- 英雄区 -->
+    <section class="hero">
+        <div class="hero-content">
+            <h2>花卉分类</h2>
+            <p>按季节探索不同花卉的美丽世界</p>
+        </div>
+    </section>
+
+    <!-- 花卉分类部分 -->
+    <section class="categories-section">
+        <div class="container">
+            <!-- 筛选器 -->
+            <div class="filters-container">
+                <h3 style="margin-top: 0; margin-bottom: 20px; color: #2d5016;">
+                    <i class="fas fa-filter"></i> 筛选花卉
+                </h3>
+                
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="month-filter">按月份：</label>
+                        <select id="month-filter">
+                            <option value="all">全部月份</option>
+                            <option value="1-3">1-3月</option>
+                            <option value="3-5">3-5月</option>
+                            <option value="4-5">4-5月</option>
+                            <option value="5-8">5-8月</option>
+                            <option value="5-9">5-9月</option>
+                            <option value="5-10">5-10月</option>
+                            <option value="6-8">6-8月</option>
+                            <option value="7-9">7-9月</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="type-filter">按类型：</label>
+                        <select id="type-filter">
+                            <option value="all">全部类型</option>
+                            <option value="herb">草本类</option>
+                            <option value="shrub">灌木类</option>
+                            <option value="bulb">球根类</option>
+                            <option value="vine">藤本类</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="color-filter">按颜色：</label>
+                        <select id="color-filter">
+                            <option value="all">全部颜色</option>
+                            <option value="red">红色系</option>
+                            <option value="pink">粉色系</option>
+                            <option value="white">白色系</option>
+                            <option value="yellow">黄色系</option>
+                            <option value="purple">紫色系</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="filter-actions">
+                    <button class="filter-btn" onclick="applyFilters()">
+                        <i class="fas fa-check"></i> 确定筛选
+                    </button>
+                    <button class="reset-btn" onclick="resetFilters()">
+                        <i class="fas fa-redo"></i> 重置筛选
+                    </button>
+                </div>
+            </div>
+
+            <!-- 筛选结果信息 -->
+            <div class="filter-results" id="filterResults" style="display: none;">
+                <div>
+                    <span id="filterResultText">筛选结果：</span>
+                    <span style="margin-left: 20px;" id="filterResultCount">共找到 0 种花卉</span>
+                </div>
+                <button onclick="resetFilters()" style="padding: 6px 12px; background: #2d5016; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                    清除筛选
+                </button>
+            </div>
+
+            <!-- 搜索框 -->
+            <div style="text-align: center; margin: 2rem 0;">
+                <div class="search-box" style="margin: 0 auto;">
+                    <input type="text" id="searchInput" placeholder="搜索花卉名称、学名或花语..." onkeypress="handleSearchKeypress(event)">
+                    <button onclick="applySearch()">
+                        <i class="fas fa-search"></i> 搜索花卉
+                    </button>
+                </div>
+            </div>
+
+            <h2 class="section-title">精选花卉</h2>
+            <p class="section-subtitle">点击花卉图片查看详细信息</p>
+            
+            <!-- 无结果提示 -->
+            <div class="no-results" id="noResults" style="display: none;">
+                <i class="fas fa-search"></i>
+                <h3>没有找到符合条件的花卉</h3>
+                <p>请尝试调整筛选条件或搜索关键词</p>
+                <button onclick="resetAll()" style="margin-top: 20px; padding: 12px 25px; background: #2d5016; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px;">
+                    <i class="fas fa-redo"></i> 显示所有花卉
+                </button>
+            </div>
+            
+            <!-- 花卉网格 -->
+            <div class="flower-grid" id="flowerGrid">
+                <!-- 花卉卡片将通过JavaScript动态生成 -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="copyright">© 2025 花卉百科 版权所有</div>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-weixin"></i></a>
+                <a href="#"><i class="fab fa-weibo"></i></a>
+                <a href="#"><i class="fab fa-tiktok"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 花卉数据
+        const flowersData = [
+            {
+                id: 1,
+                name: '玫瑰',
+                scientificName: 'Rosa rugosa',
+                language: '爱情、美丽、热情',
+                month: '5-9',
+                monthText: '5-9月',
+                type: 'shrub',
+                typeText: '灌木',
+                colors: ['red', 'pink', 'white'],
+                colorText: '红/粉/白',
+                image: 'images/flowers/rose.avif',
+                link: 'flower-detail-rose.html',
+                price: 58.00,
+                stock: 50
+            },
+            {
+                id: 2,
+                name: '郁金香',
+                scientificName: 'Tulipa gesneriana',
+                language: '优雅、高贵、祝福',
+                month: '3-5',
+                monthText: '3-5月',
+                type: 'bulb',
+                typeText: '球根',
+                colors: ['red', 'yellow', 'purple'],
+                colorText: '红/黄/紫',
+                image: 'images/flowers/tulip.avif',
+                link: 'flower-detail-tulip.html',
+                price: 42.00,
+                stock: 30
+            },
+            {
+                id: 3,
+                name: '百合',
+                scientificName: 'Lilium brownii',
+                language: '纯洁、高雅、顺利',
+                month: '6-8',
+                monthText: '6-8月',
+                type: 'bulb',
+                typeText: '球根',
+                colors: ['white', 'pink', 'yellow'],
+                colorText: '白/粉/黄',
+                image: 'images/flowers/lily.avif',
+                link: 'flower-detail-lily.html',
+                price: 38.00,
+                stock: 5
+            },
+            {
+                id: 4,
+                name: '兰花',
+                scientificName: 'Cymbidium spp.',
+                language: '高洁、典雅、淡泊',
+                month: '1-3',
+                monthText: '1-3月',
+                type: 'herb',
+                typeText: '草本',
+                colors: ['white', 'purple', 'pink'],
+                colorText: '白/紫/粉',
+                image: 'images/flowers/orchid.jpg',
+                link: 'flower-detail-orchid.html',
+                price: 128.00,
+                stock: 15
+            },
+            {
+                id: 5,
+                name: '牡丹',
+                scientificName: 'Paeonia suffruticosa',
+                language: '富贵、吉祥、圆满',
+                month: '4-5',
+                monthText: '4-5月',
+                type: 'shrub',
+                typeText: '灌木',
+                colors: ['red', 'pink', 'white'],
+                colorText: '红/粉/白',
+                image: 'images/flowers/peony.avif',
+                link: 'flower-detail-peony.html',
+                price: 88.00,
+                stock: 25
+            },
+            {
+                id: 6,
+                name: '向日葵',
+                scientificName: 'Helianthus annuus',
+                language: '阳光、勇敢、忠诚',
+                month: '7-9',
+                monthText: '7-9月',
+                type: 'herb',
+                typeText: '草本',
+                colors: ['yellow'],
+                colorText: '黄',
+                image: 'images/flowers/sunflower.avif',
+                link: 'flower-detail-sunflower.html',
+                price: 32.00,
+                stock: 0
+            },
+            {
+                id: 7,
+                name: '康乃馨',
+                scientificName: 'Dianthus caryophyllus',
+                language: '母爱、温馨、祝福',
+                month: '5-8',
+                monthText: '5-8月',
+                type: 'herb',
+                typeText: '草本',
+                colors: ['red', 'pink', 'white'],
+                colorText: '红/粉/白',
+                image: 'images/flowers/carnation.avif',
+                link: 'flower-detail-carnation.html',
+                price: 28.00,
+                stock: 40
+            },
+            {
+                id: 8,
+                name: '茉莉',
+                scientificName: 'Jasminum sambac',
+                language: '纯洁、优美、友谊',
+                month: '5-10',
+                monthText: '5-10月',
+                type: 'shrub',
+                typeText: '灌木',
+                colors: ['white'],
+                colorText: '白',
+                image: 'images/flowers/jasmine.avif',
+                link: 'flower-detail-jasmine.html',
+                price: 45.00,
+                stock: 20
+            }
+        ];
+
+        // 图片错误处理函数（使用和首页相同的方法）
+        function handleFlowerImageError(img) {
+            const altText = img.alt || '花卉图片';
+            const placeholderColors = {
+                '玫瑰': 'ff6b6b', '郁金香': '74b9ff', '百合': 'a29bfe', 
+                '兰花': '55efc4', '牡丹': 'fd79a8', '向日葵': 'fdcb6e',
+                '康乃馨': 'e17055', '茉莉': '00cec9'
+            };
+            const color = placeholderColors[altText] || '2d5016';
+            img.src = `https://via.placeholder.com/300x200/${color}/ffffff?text=${encodeURIComponent(altText)}`;
+        }
+        
+        function handleNotificationImageError(img) {
+            const flowerName = img.alt || '花卉';
+            const svg = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60">
+                    <rect width="100%" height="100%" fill="#2d5016"/>
+                    <text x="50%" y="50%" text-anchor="middle" dy=".3em" 
+                          fill="white" font-family="Arial" font-size="12">
+                        ${flowerName}
+                    </text>
+                </svg>
+            `;
+            img.src = 'data:image/svg+xml;base64,' + btoa(svg);
+        }
+        
+        function closeCartNotification() {
+            const notification = document.getElementById('cartNotification');
+            notification.classList.remove('show');
+        }
+        
+        function showCartNotification(productName, productImage, cartCount) {
+            const notificationTitle = document.getElementById('notificationTitle');
+            const notificationImage = document.getElementById('notificationImage');
+            const cartItemCount = document.getElementById('cartItemCount');
+            
+            if (notificationTitle) notificationTitle.textContent = `${productName} 已加入购物车`;
+            if (cartItemCount) cartItemCount.textContent = cartCount;
+            
+            if (notificationImage && productImage) {
+                notificationImage.src = productImage;
+                notificationImage.alt = productName;
+            }
+            
+            const notification = document.getElementById('cartNotification');
+            if (notification) {
+                notification.classList.add('show');
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 5000);
+            }
+        }
+        
+        // 搜索回车键处理
+        function handleSearchKeypress(event) {
+            if (event.key === 'Enter') {
+                applySearch();
+            }
+        }
+        
+        // 更新购物车数量显示
+        function updateCartCountDisplay() {
+            const cartCountElement = document.getElementById('cartCount');
+            if (cartCountElement) {
+                try {
+                    const savedCart = localStorage.getItem('flowerCart');
+                    if (savedCart) {
+                        const cartItems = JSON.parse(savedCart);
+                        const count = cartItems.reduce((total, item) => total + item.quantity, 0);
+                        cartCountElement.textContent = count;
+                        cartCountElement.style.display = count > 0 ? 'flex' : 'none';
+                        return count;
+                    } else {
+                        cartCountElement.style.display = 'none';
+                        return 0;
+                    }
+                } catch (e) {
+                    cartCountElement.style.display = 'none';
+                    return 0;
+                }
+            }
+            return 0;
+        }
+        
+        // 添加到购物车函数（使用和首页相同的方法）
+        function addToCart(id, name, scientificName, language, price, image, color, season, stock) {
+            if (stock <= 0) {
+                alert(`${name} 已售罄，请选择其他花卉`);
+                return;
+            }
+            
+            let cart = JSON.parse(localStorage.getItem('flowerCart') || '[]');
+            const existingItem = cart.find(item => item.id === id);
+            
+            if (existingItem) {
+                if (existingItem.quantity >= stock) {
+                    alert(`最多只能购买 ${stock} 件 ${name}`);
+                    return;
+                }
+                existingItem.quantity++;
+            } else {
+                cart.push({
+                    id: id,
+                    name: name,
+                    scientificName: scientificName,
+                    language: language,
+                    price: price,
+                    image: image,
+                    color: color,
+                    season: season,
+                    quantity: 1,
+                    stock: stock
+                });
+            }
+            
+            localStorage.setItem('flowerCart', JSON.stringify(cart));
+            const cartCount = updateCartCountDisplay();
+            window.dispatchEvent(new Event('storage'));
+            showCartNotification(name, image, cartCount);
+            
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check"></i> 已添加';
+            button.classList.add('added');
+            
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.classList.remove('added');
+            }, 2000);
+        }
+        
+        // 渲染花卉卡片
+        function renderFlowers(flowers) {
+            const flowerGrid = document.getElementById('flowerGrid');
+            const noResults = document.getElementById('noResults');
+            
+            if (!flowers || flowers.length === 0) {
+                flowerGrid.innerHTML = '';
+                noResults.style.display = 'block';
+                return;
+            }
+            
+            noResults.style.display = 'none';
+            
+            let html = '';
+            flowers.forEach(flower => {
+                const stockClass = flower.stock > 10 ? 'stock-available' : 
+                                 flower.stock > 0 ? 'stock-low' : 'stock-out';
+                const stockText = flower.stock > 10 ? '库存充足' : 
+                                flower.stock > 0 ? `仅剩 ${flower.stock} 件` : '暂时缺货';
+                
+                html += `
+                <div class="flower-card">
+                    <a href="${flower.link}" class="flower-image-link">
+                        <img src="${flower.image}" alt="${flower.name}" onerror="handleFlowerImageError(this)">
+                    </a>
+                    <div class="flower-info">
+                        <h4>${flower.name}</h4>
+                        <p class="scientific-name">${flower.scientificName}</p>
+                        <p class="flower-language">${flower.language}</p>
+                        
+                        <div class="flower-price">¥${flower.price.toFixed(2)}</div>
+                        <div class="flower-stock ${stockClass}">${stockText}</div>
+                        
+                        <div class="tags">
+                            <span class="tag color">${flower.colorText}</span>
+                            <span class="tag season">${flower.monthText}</span>
+                            <span class="tag type">${flower.typeText}</span>
+                        </div>
+                        
+                        <div class="flower-actions">
+                            <button class="add-to-cart-btn" 
+                                    onclick="addToCart(${flower.id}, '${flower.name}', '${flower.scientificName}', '${flower.language}', ${flower.price}, '${flower.image}', '${flower.colorText}', '${flower.monthText}', ${flower.stock})"
+                                    ${flower.stock <= 0 ? 'disabled' : ''}>
+                                <i class="fas ${flower.stock > 0 ? 'fa-cart-plus' : 'fa-ban'}"></i>
+                                ${flower.stock > 0 ? '加入购物车' : '暂时缺货'}
+                            </button>
+                            <a href="${flower.link}" class="btn btn-primary">
+                                <i class="fas fa-eye"></i> 详情
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                `;
+            });
+            
+            flowerGrid.innerHTML = html;
+        }
+        
+        // 应用筛选
+        function applyFilters() {
+            const month = document.getElementById('month-filter').value;
+            const type = document.getElementById('type-filter').value;
+            const color = document.getElementById('color-filter').value;
+            const searchKeyword = document.getElementById('searchInput').value.toLowerCase();
+            
+            console.log('筛选条件:', { month, type, color, searchKeyword });
+            
+            let filtered = flowersData;
+            
+            // 按月份筛选
+            if (month !== 'all') {
+                filtered = filtered.filter(flower => flower.month === month);
+            }
+            
+            // 按类型筛选
+            if (type !== 'all') {
+                filtered = filtered.filter(flower => flower.type === type);
+            }
+            
+            // 按颜色筛选
+            if (color !== 'all') {
+                filtered = filtered.filter(flower => flower.colors.includes(color));
+            }
+            
+            // 按关键词搜索
+            if (searchKeyword.trim() !== '') {
+                filtered = filtered.filter(flower => 
+                    flower.name.toLowerCase().includes(searchKeyword) ||
+                    flower.scientificName.toLowerCase().includes(searchKeyword) ||
+                    flower.language.toLowerCase().includes(searchKeyword)
+                );
+            }
+            
+            console.log('筛选结果:', filtered.length, '个花卉');
+            console.log('花卉名称:', filtered.map(f => f.name));
+            
+            // 更新筛选结果信息
+            const filterResults = document.getElementById('filterResults');
+            const filterResultText = document.getElementById('filterResultText');
+            const filterResultCount = document.getElementById('filterResultCount');
+            
+            if (filtered.length === flowersData.length && month === 'all' && type === 'all' && color === 'all' && searchKeyword === '') {
+                filterResults.style.display = 'none';
+            } else {
+                filterResults.style.display = 'flex';
+                
+                const monthText = getMonthText(month);
+                const typeText = getTypeText(type);
+                const colorText = getColorText(color);
+                
+                filterResultText.textContent = `筛选结果：${monthText} | ${typeText} | ${colorText}`;
+                filterResultCount.textContent = `共找到 ${filtered.length} 种花卉`;
+            }
+            
+            // 渲染筛选结果
+            renderFlowers(filtered);
+        }
+        
+        // 应用搜索
+        function applySearch() {
+            applyFilters(); // 搜索和筛选使用相同的逻辑
+        }
+        
+        // 重置筛选
+        function resetFilters() {
+            document.getElementById('month-filter').value = 'all';
+            document.getElementById('type-filter').value = 'all';
+            document.getElementById('color-filter').value = 'all';
+            document.getElementById('searchInput').value = '';
+            document.getElementById('filterResults').style.display = 'none';
+            renderFlowers(flowersData);
+        }
+        
+        // 重置所有
+        function resetAll() {
+            resetFilters();
+        }
+        
+        // 获取月份文本
+        function getMonthText(value) {
+            const monthMap = {
+                'all': '全部月份',
+                '1-3': '1-3月',
+                '3-5': '3-5月',
+                '4-5': '4-5月',
+                '5-8': '5-8月',
+                '5-9': '5-9月',
+                '5-10': '5-10月',
+                '6-8': '6-8月',
+                '7-9': '7-9月'
+            };
+            return monthMap[value] || '全部月份';
+        }
+        
+        // 获取类型文本
+        function getTypeText(value) {
+            const typeMap = {
+                'all': '全部类型',
+                'herb': '草本类',
+                'shrub': '灌木类',
+                'bulb': '球根类',
+                'vine': '藤本类'
+            };
+            return typeMap[value] || '全部类型';
+        }
+        
+        // 获取颜色文本
+        function getColorText(value) {
+            const colorMap = {
+                'all': '全部颜色',
+                'red': '红色系',
+                'pink': '粉色系',
+                'white': '白色系',
+                'yellow': '黄色系',
+                'purple': '紫色系'
+            };
+            return colorMap[value] || '全部颜色';
+        }
+        
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始渲染所有花卉
+            renderFlowers(flowersData);
+            
+            // 更新购物车数量显示
+            updateCartCountDisplay();
+            
+            // 监听购物车变化
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'flowerCart') {
+                    updateCartCountDisplay();
+                }
+            });
+            
+            // 处理缺失的图片
+            setTimeout(() => {
+                const images = document.querySelectorAll('img');
+                images.forEach(img => {
+                    if (!img.complete || img.naturalHeight === 0) {
+                        if (img.id !== 'notificationImage') {
+                            handleFlowerImageError(img);
+                        }
+                    }
+                });
+            }, 100);
+            
+            console.log('页面初始化完成，共有', flowersData.length, '个花卉');
+        });
+    </script>
+</body>
+</html>

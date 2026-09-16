@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>康乃馨详情 - 花卉百科</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* 复看向日葵详情页的样式，修改颜色主题为珊瑚色系 */
+        .container {
+            max-width: 1400px;
+            padding: 0 2rem;
+        }
+        
+        .flower-detail {
+            padding: 2rem 0;
+        }
+        
+        .detail-header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .detail-header h2 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .scientific-name {
+            color: #666;
+            font-size: 1.1rem;
+            font-style: italic;
+        }
+        
+        /* 紧凑布局优化 - 固定左侧，滚动右侧 */
+        .detail-content {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 3rem;
+            min-height: 600px;
+        }
+        
+        /* 左侧图片固定区域 */
+        .flower-images {
+            position: sticky;
+            top: 2rem;
+            height: fit-content;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+            border: 1px solid #f0f0f0;
+        }
+        
+        .main-image {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+        }
+        
+        .thumbnails {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .thumbnails img {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .thumbnails img.active,
+        .thumbnails img:hover {
+            border-color: #e17055;
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(225, 112, 85, 0.2);
+        }
+        
+        /* 右侧滚动内容区域 */
+        .flower-info {
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+            padding-right: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        /* 自定义滚动条 - 康乃馨主题色（珊瑚色系） */
+        .flower-info::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .flower-info::-webkit-scrollbar-track {
+            background: #f5f5f5;
+            border-radius: 3px;
+        }
+        
+        .flower-info::-webkit-scrollbar-thumb {
+            background: #e17055;
+            border-radius: 3px;
+        }
+        
+        .flower-info::-webkit-scrollbar-thumb:hover {
+            background: #d63031;
+        }
+        
+        /* 基本信息网格优化 - 康乃馨主题色 */
+        .basic-info {
+            background: #f9f9f9;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid #e17055;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .info-item {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        /* 品种卡片紧凑布局 */
+        .carnation-special {
+            background: linear-gradient(135deg, #fff5f0 0%, #ffefe8 100%);
+            padding: 1.5rem;
+            border-radius: 12px;
+        }
+        
+        .carnation-varieties {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .variety-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.25rem;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(225, 112, 85, 0.1);
+            border: 1px solid #ffd9c9;
+            transition: all 0.3s ease;
+        }
+        
+        .variety-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(225, 112, 85, 0.2);
+        }
+        
+        .variety-color {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            border: 3px solid white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .color-red { background: linear-gradient(135deg, #ff6b6b, #ff8e8e); }
+        .color-pink { background: linear-gradient(135deg, #ff9ff3, #f368e0); }
+        .color-white { background: linear-gradient(135deg, #ffffff, #f1f2f6); border: 1px solid #eee; }
+        .color-yellow { background: linear-gradient(135deg, #ffd700, #ff9f43); }
+        
+        /* 养护要点紧凑布局 */
+        .care-info {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+        }
+        
+        .care-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .care-item {
+            padding: 0.75rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 3px solid #2d5016;
+        }
+        
+        .care-tips {
+            background: #f8fdf8;
+            border-left: 4px solid #2d5016;
+            padding: 1.25rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        /* 季节养护紧凑布局 */
+        .seasonal-care {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .season-care {
+            background: white;
+            padding: 1.25rem;
+            border-radius: 8px;
+            border: 1px solid #e8f5e8;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .season-care h4 {
+            margin-bottom: 0.75rem;
+            color: #2d5016;
+            font-size: 1rem;
+        }
+        
+        .season-care p {
+            margin: 0.3rem 0;
+            font-size: 0.9rem;
+        }
+        
+        /* 其他部分紧凑布局 */
+        .disease-prevention {
+            background: #fffaf0;
+            border: 1px solid #ffeaa7;
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        
+        /* 按钮组优化 - 康乃馨主题色 */
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+            padding: 1.5rem;
+            background: #f9f9f9;
+            border-radius: 12px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #e17055, #d63031);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(225, 112, 85, 0.3);
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 1200px) {
+            .detail-content {
+                grid-template-columns: 350px 1fr;
+                gap: 2rem;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .detail-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .flower-images {
+                position: static;
+                max-width: 500px;
+                margin: 0 auto;
+            }
+            
+            .flower-info {
+                max-height: none;
+                overflow-y: visible;
+                padding-right: 0;
+            }
+            
+            .info-grid,
+            .care-grid,
+            .carnation-varieties {
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .detail-header h2 {
+                font-size: 2rem;
+            }
+            
+            .detail-content {
+                gap: 1.5rem;
+            }
+            
+            .thumbnails img {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .main-image {
+                height: 300px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .info-grid,
+            .care-grid,
+            .carnation-varieties,
+            .seasonal-care {
+                grid-template-columns: 1fr;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .button-group button {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .thumbnails img {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .main-image {
+                height: 250px;
+            }
+        }
+        
+        /* 通用样式 */
+        h3 {
+            color: #333;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        h4 {
+            color: #444;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        strong {
+            color: #333;
+            font-weight: 600;
+        }
+        
+        /* 康乃馨特色样式 */
+        .carnation-tip {
+            background: #ffe8e0;
+            border-left: 4px solid #e17055;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        /* 母亲节标识 */
+        .mothers-day {
+            background: linear-gradient(135deg, #ff9ff3, #e17055);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: bold;
+            margin-left: 1rem;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>花卉百科</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="categories.html">花卉分类</a></li>
+                <li><a href="care-guide.html">养护指南</a></li>
+                <li><a href="about.html">关于我们</a></li>
+                <li><a href="login.html">个人中心</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 花卉详情 -->
+    <section class="flower-detail">
+        <div class="container">
+            <div class="detail-header">
+                <h2>🌷 康乃馨 <span class="mothers-day">母亲节之花</span></h2>
+                <p class="scientific-name">Dianthus caryophyllus - 母爱与温馨的象征</p>
+            </div>
+
+            <div class="detail-content">
+                <!-- 图片区（左侧固定） -->
+                <div class="flower-images">
+                    <img src="images/flowers/carnation.avif" alt="康乃馨主图" class="main-image" onerror="handleMissingImage(this)">
+                    <div class="thumbnails">
+                        <img src="images/flowers/carnation.avif" alt="康乃馨整体" class="active" onerror="handleMissingImage(this)">
+                        <img src="images/flowers/carnation-detail1.jpg" alt="康乃馨花朵特写" onerror="handleMissingImage(this)">
+                        <img src="images/flowers/carnation-detail2.jpg" alt="康乃馨花束" onerror="handleMissingImage(this)">
+                    </div>
+                </div>
+
+                <!-- 信息区（右侧可滚动） -->
+                <div class="flower-info">
+                    <!-- 基本信息 -->
+                    <div class="basic-info">
+                        <h3>📋 基本信息</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <strong>学名：</strong>
+                                <span>Dianthus caryophyllus</span>
+                            </div>
+                            <div class="info-item">
+                                <strong>科属：</strong>
+                                <span>石竹科石竹属</span>
+                            </div>
+                            <div class="info-item">
+                                <strong>原产地：</strong>
+                                <span>地中海地区</span>
+                            </div>
+                            <div class="info-item">
+                                <strong>花期：</strong>
+                                <span>5-8月（盛花期5-6月）</span>
+                            </div>
+                            <div class="info-item">
+                                <strong>花语：</strong>
+                                <span>母爱、温馨、祝福、纯洁的爱</span>
+                            </div>
+                            <div class="info-item">
+                                <strong>株高：</strong>
+                                <span>30-70厘米</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 品种介绍 -->
+                    <div class="carnation-special">
+                        <h3>🎨 主要品种</h3>
+                        <div class="carnation-varieties">
+                            <div class="variety-card">
+                                <div class="variety-color color-red"></div>
+                                <h4>红康乃馨</h4>
+                                <p>热烈的母爱</p>
+                                <small>代表：红色康乃馨</small>
+                            </div>
+                            <div class="variety-card">
+                                <div class="variety-color color-pink"></div>
+                                <h4>粉康乃馨</h4>
+                                <p>年轻的母爱</p>
+                                <small>代表：粉色康乃馨</small>
+                            </div>
+                            <div class="variety-card">
+                                <div class="variety-color color-white"></div>
+                                <h4>白康乃馨</h4>
+                                <p>纯洁的母爱</p>
+                                <small>代表：白色康乃馨</small>
+                            </div>
+                            <div class="variety-card">
+                                <div class="variety-color color-yellow"></div>
+                                <h4>黄康乃馨</h4>
+                                <p>感激与友谊</p>
+                                <small>代表：黄色康乃馨</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 养护要点 -->
+                    <div class="care-info">
+                        <h3>🌱 养护要点</h3>
+                        <div class="care-grid">
+                            <div class="care-item">
+                                <strong>☀️ 光照：</strong>
+                                <span>喜阳光充足，每天6-8小时</span>
+                            </div>
+                            <div class="care-item">
+                                <strong>💧 浇水：</strong>
+                                <span>保持土壤微湿，忌积水</span>
+                            </div>
+                            <div class="care-item">
+                                <strong>🌿 土壤：</strong>
+                                <span>疏松肥沃的微碱性土壤</span>
+                            </div>
+                            <div class="care-item">
+                                <strong>🌡️ 温度：</strong>
+                                <span>适宜15-25°C，忌高温高湿</span>
+                            </div>
+                            <div class="care-item">
+                                <strong>🍃 施肥：</strong>
+                                <span>生长期每2周施一次液肥</span>
+                            </div>
+                            <div class="care-item">
+                                <strong>✂️ 修剪：</strong>
+                                <span>花后及时摘心，促进分枝</span>
+                            </div>
+                        </div>
+                        
+                        <div class="care-tips">
+                            <h4>💡 专业养护技巧</h4>
+                            <p>• 夏季高温时适当遮阴，防止日灼</p>
+                            <p>• 浇水时避免淋湿叶片，预防病害</p>
+                            <p>• 及时摘除残花，延长花期</p>
+                            <p>• 冬季减少浇水，保持盆土稍干</p>
+                        </div>
+                        
+                        <div class="carnation-tip">
+                            <h4>🌷 康乃馨特色养护</h4>
+                            <p>• 康乃馨为多年生草本，可多年栽培</p>
+                            <p>• 枝条脆嫩，需防倒伏和折断</p>
+                            <p>• 花后修剪可促进第二次开花</p>
+                            <p>• 适当控水可延长切花寿命</p>
+                        </div>
+                    </div>
+
+                    <!-- 季节养护 -->
+                    <div class="care-info">
+                        <h3>🍂 季节养护指南</h3>
+                        <div class="seasonal-care">
+                            <div class="season-care">
+                                <h4>🌸 春季（3-5月）</h4>
+                                <p>• 换盆分株</p>
+                                <p>• 施催芽肥</p>
+                                <p>• 适当摘心</p>
+                                <p>• 预防虫害</p>
+                            </div>
+                            <div class="season-care">
+                                <h4>☀️ 夏季（6-8月）</h4>
+                                <p>• 花期管理</p>
+                                <p>• 适当遮阴</p>
+                                <p>• 花后修剪</p>
+                                <p>• 防治病害</p>
+                            </div>
+                            <div class="season-care">
+                                <h4>🍁 秋季（9-11月）</h4>
+                                <p>• 修剪整形</p>
+                                <p>• 施越冬肥</p>
+                                <p>• 减少浇水</p>
+                                <p>• 准备越冬</p>
+                            </div>
+                            <div class="season-care">
+                                <h4>❄️ 冬季（12-2月）</h4>
+                                <p>• 防寒保温</p>
+                                <p>• 控制浇水</p>
+                                <p>• 检查虫害</p>
+                                <p>• 室内养护</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 病虫害防治 -->
+                    <div class="disease-prevention">
+                        <h3>🐛 常见病虫害防治</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <strong>立枯病：</strong>
+                                <span>茎基部腐烂，改善通风，喷洒多菌灵</span>
+                            </div>
+                            <div class="info-item">
+                                <strong>锈病：</strong>
+                                <span>叶片有锈斑，剪除病叶，喷洒粉锈宁</span>
+                            </div>
+                            <div class="info-item">
+                                <strong>蚜虫：</strong>
+                                <span>危害嫩芽，喷洒吡虫啉</span>
+                            </div>
+                            <div class="info-item">
+                                <strong>红蜘蛛：</strong>
+                                <span>叶片有黄斑，增加湿度，喷洒杀螨剂</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 繁殖方法 -->
+                    <div class="care-info">
+                        <h3>🌿 繁殖方法</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <strong>扦插繁殖：</strong>
+                                <span>主要繁殖方式，春秋季扦插</span>
+                            </div>
+                            <div class="info-item">
+                                <strong>播种繁殖：</strong>
+                                <span>用于新品种培育</span>
+                            </div>
+                            <div class="info-item">
+                                <strong>分株繁殖：</strong>
+                                <span>多年生植株可分株</span>
+                            </div>
+                            <div class="info-item">
+                                <strong>组织培养：</strong>
+                                <span>大规模生产常用方法</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 文化意义 -->
+                    <div class="care-info">
+                        <h3>📚 文化意义</h3>
+                        <p>康乃馨是母亲节的象征花卉，代表着母爱、温馨和祝福：</p>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <strong>母亲节之花：</strong>
+                                <span>1907年成为母亲节官方花卉</span>
+                            </div>
+                            <div class="info-item">
+                                <strong>母爱象征：</strong>
+                                <span>红色康乃馨象征热烈的母爱</span>
+                            </div>
+                            <div class="info-item">
+                                <strong>祝福之花：</strong>
+                                <span>送给母亲表达感恩和祝福</span>
+                            </div>
+                            <div class="info-item">
+                                <strong>纯洁之爱：</strong>
+                                <span>白色康乃馨象征纯洁的爱</span>
+                            </div>
+                        </div>
+                        
+                        <div class="carnation-tip">
+                            <h4>💝 康乃馨与节日</h4>
+                            <p>• 母亲节：红色和粉色康乃馨最受欢迎</p>
+                            <p>• 教师节：表达对老师的尊敬和感激</p>
+                            <p>• 妇女节：送给女性的祝福之花</p>
+                            <p>• 结婚纪念日：象征持久的爱情</p>
+                        </div>
+                    </div>
+
+                    <!-- 切花养护 -->
+                    <div class="care-info">
+                        <h3>💐 切花养护技巧</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <strong>选择花朵：</strong>
+                                <span>选择花苞半开，花色鲜艳</span>
+                            </div>
+                            <div class="info-item">
+                                <strong>处理花茎：</strong>
+                                <span>斜切花茎，去除下部叶片</span>
+                            </div>
+                            <div class="info-item">
+                                <strong>水质要求：</strong>
+                                <span>使用干净的水，添加保鲜剂</span>
+                            </div>
+                            <div class="info-item">
+                                <strong>摆放位置：</strong>
+                                <span>避免阳光直射和空调风口</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 节日搭配 -->
+                    <div class="care-info">
+                        <h3>🎁 节日搭配建议</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <strong>母亲节：</strong>
+                                <span>红康乃馨+满天星+绿叶</span>
+                            </div>
+                            <div class="info-item">
+                                <strong>教师节：</strong>
+                                <span>粉康乃馨+百合+文竹</span>
+                            </div>
+                            <div class="info-item">
+                                <strong>生日祝福：</strong>
+                                <span>多彩康乃馨+玫瑰+尤加利</span>
+                            </div>
+                            <div class="info-item">
+                                <strong>探病慰问：</strong>
+                                <span>白康乃馨+黄莺+勿忘我</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 药用价值 -->
+                    <div class="care-info">
+                        <h3>🌿 药用价值</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <strong>舒肝解郁：</strong>
+                                <span>花蕾可泡茶，缓解情绪紧张</span>
+                            </div>
+                            <div class="info-item">
+                                <strong>美容养颜：</strong>
+                                <span>含有丰富维生素，促进皮肤健康</span>
+                            </div>
+                            <div class="info-item">
+                                <strong>清热解毒：</strong>
+                                <span>花茶可清热，缓解咽喉不适</span>
+                            </div>
+                            <div class="info-item">
+                                <strong>调节内分泌：</strong>
+                                <span>对女性内分泌有一定调节作用</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 象征意义 -->
+                    <div class="care-info">
+                        <h3>💮 颜色象征意义</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <strong>红色：</strong>
+                                <span>热烈的爱，对母亲的崇敬</span>
+                            </div>
+                            <div class="info-item">
+                                <strong>粉色：</strong>
+                                <span>年轻美丽，永远年轻的母爱</span>
+                            </div>
+                            <div class="info-item">
+                                <strong>白色：</strong>
+                                <span>纯洁的爱，对母亲的思念</span>
+                            </div>
+                            <div class="info-item">
+                                <strong>黄色：</strong>
+                                <span>感激之情，对母亲的感谢</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 按钮组 -->
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="location.href='care-guide.html'">
+                            📖 查看完整养护指南
+                        </button>
+                        <button class="btn btn-primary" onclick="location.href='categories.html'">
+                            🌸 浏览其他花卉
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="copyright">© 2025 花卉百科 版权所有</div>
+            <div class="social-links">
+                <a href="#">微信</a>
+                <a href="#">微博</a>
+                <a href="#">抖音</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        function handleMissingImage(img) {
+            const altText = img.alt || '康乃馨图片';
+            const placeholderColors = {
+                '康乃馨主图': 'e17055',
+                '康乃馨整体': 'e17055', 
+                '康乃馨花朵特写': 'd63031',
+                '康乃馨花束': 'e17055'
+            };
+            const color = placeholderColors[altText] || 'e17055';
+            img.src = `https://via.placeholder.com/400x350/${color}/ffffff?text=${encodeURIComponent(altText)}`;
+        }
+        
+        // 图片画廊功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const thumbnails = document.querySelectorAll('.thumbnails img');
+            const mainImage = document.querySelector('.main-image');
+            
+            if (thumbnails && mainImage) {
+                thumbnails.forEach(thumb => {
+                    thumb.addEventListener('click', function() {
+                        mainImage.src = this.src;
+                        mainImage.alt = this.alt;
+                        
+                        // 更新激活状态
+                        thumbnails.forEach(t => t.classList.remove('active'));
+                        this.classList.add('active');
+                    });
+                });
+            }
+            
+            // 图片错误处理
+            const images = document.querySelectorAll('img');
+            images.forEach(img => {
+                if (!img.complete || img.naturalHeight === 0) {
+                    handleMissingImage(img);
+                }
+                img.addEventListener('error', function() {
+                    handleMissingImage(this);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

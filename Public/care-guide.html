@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>养护指南 - 花卉网站</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- 添加 Font Awesome 图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 购物车相关样式 */
+        .cart-icon-container {
+            position: relative;
+            margin-left: 20px;
+        }
+        
+        .cart-icon {
+            color: #2d5016;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .cart-icon:hover {
+            color: #27ae60;
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #e74c3c;
+            color: white;
+            font-size: 0.8rem;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+            display: none; /* 默认隐藏 */
+        }
+        
+        /* FAQ 展开状态样式 */
+        .faq-item.active .faq-answer {
+            display: block !important;
+        }
+        
+        .faq-item.active .faq-toggle {
+            transform: rotate(45deg);
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>花卉百科</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="categories.html">花卉分类</a></li>
+                <li><a href="care-guide.html" class="active">养护指南</a></li>
+                <li><a href="about.html">关于我们</a></li>
+                <li><a href="login.html">个人中心</a></li>
+                <!-- 购物车图标 -->
+                <li class="cart-icon-container" id="navCart">
+                    <a href="cart.html" class="cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 英雄区 -->
+    <section class="hero">
+        <div class="hero-content">
+            <h2>花卉养护指南</h2>
+            <p>专业的花卉养护技巧，让你的花草茁壮成长</p>
+        </div>
+    </section>
+
+    <!-- 快速导航 -->
+    <section class="care-guide-page">
+        <div class="container">
+            <div class="quick-nav">
+                <h2 class="section-title">快速导航</h2>
+                <div class="nav-cards">
+                    <a href="#light" class="nav-card">
+                        <div class="nav-icon">☀️</div>
+                        <span>光照管理</span>
+                    </a>
+                    <a href="#water" class="nav-card">
+                        <div class="nav-icon">💧</div>
+                        <span>浇水技巧</span>
+                    </a>
+                    <a href="#soil" class="nav-card">
+                        <div class="nav-icon">🌱</div>
+                        <span>土壤选择</span>
+                    </a>
+                    <a href="#season" class="nav-card">
+                        <div class="nav-icon">🍂</div>
+                        <span>季节养护</span>
+                    </a>
+                    <a href="#tools" class="nav-card">
+                        <div class="nav-icon">🔧</div>
+                        <span>养护工具</span>
+                    </a>
+                    <a href="#faq" class="nav-card">
+                        <div class="nav-icon">❓</div>
+                        <span>常见问题</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 光照管理 -->
+            <div id="light" class="guide-section">
+                <h3>光照管理</h3>
+                <div class="guide-content">
+                    <div class="guide-image-full">
+                        <img src="images/guide-light.jpg" alt="光照管理" onerror="handleMissingImage(this)">
+                    </div>
+                    <div class="guide-text">
+                        <h4>不同花卉的光照需求</h4>
+                        <ul>
+                            <li>阳性花卉（玫瑰、向日葵）：每天6小时以上直射光</li>
+                            <li>中性花卉（茉莉、桂花）：每天4-6小时散射光</li>
+                            <li>阴性花卉（兰花、龟背竹）：每天2-4小时弱光，避免直射</li>
+                            <li>夏季正午需为中性和阴性花卉遮阴，防止叶片灼伤</li>
+                            <li>冬季可适当增加阳性花卉的光照时间，促进生长</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 浇水技巧 -->
+            <div id="water" class="guide-section">
+                <h3>浇水技巧</h3>
+                <div class="guide-content">
+                    <div class="guide-image-full">
+                        <img src="images/guide-watering.jpg" alt="浇水技巧" onerror="handleMissingImage(this)">
+                    </div>
+                    <div class="guide-text">
+                        <h4>科学浇水方法</h4>
+                        <ul>
+                            <li>遵循"见干见湿"原则：土壤表面干燥后再浇水，浇则浇透</li>
+                            <li>浇水时间：夏季清晨或傍晚，冬季中午温暖时</li>
+                            <li>浇水方式：草本花卉沿盆边浇，木本花卉可直接浇根部</li>
+                            <li>水质要求：优先使用雨水或静置24小时的自来水，避免氯气伤害</li>
+                            <li>空气湿度：热带花卉（兰花、蝴蝶兰）需经常向叶片喷水增湿</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 土壤选择 -->
+            <div id="soil" class="guide-section">
+                <h3>土壤选择</h3>
+                <div class="guide-content">
+                    <div class="guide-image-full">
+                        <img src="images/guide-soil.jpg" alt="土壤选择" onerror="handleMissingImage(this)">
+                    </div>
+                    <div class="guide-text">
+                        <h4>不同花卉的土壤需求</h4>
+                        <ul>
+                            <li>酸性土壤（pH 4.5-6.0）：杜鹃、山茶、兰花，可添加腐叶土</li>
+                            <li>中性土壤（pH 6.0-7.0）：玫瑰、牡丹、郁金香，用园土+腐殖土</li>
+                            <li>碱性土壤（pH 7.0-8.5）：月季、木槿、丁香，可添加草木灰</li>
+                            <li>通用配方：园土4份+腐叶土3份+河沙2份+有机肥1份</li>
+                            <li>每年春季换盆时更换新土，避免土壤板结</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 季节养护 -->
+            <div id="season" class="guide-section">
+                <h3>季节养护要点</h3>
+                <div class="seasonal-grid compact" id="seasonContainer">
+                    <!-- 春季养护 -->
+                    <div class="season-card">
+                        <div class="season-header spring">
+                            <h4>春季养护</h4>
+                            <div class="season-icon">🌱</div>
+                        </div>
+                        <div class="season-content">
+                            <img src="images/spring.jpg" alt="春季花卉" onerror="handleMissingImage(this)">
+                            <ul>
+                                <li>春季是花卉生长旺季，及时施肥促进萌芽</li>
+                                <li>3-4月适合换盆、分株繁殖</li>
+                                <li>注意防治蚜虫、红蜘蛛等早春害虫</li>
+                                <li>逐渐增加浇水频率，保持土壤湿润</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- 夏季养护 -->
+                    <div class="season-card">
+                        <div class="season-header summer">
+                            <h4>夏季养护</h4>
+                            <div class="season-icon">☀️</div>
+                        </div>
+                        <div class="season-content">
+                            <img src="images/summer.jpg" alt="夏季花卉" onerror="handleMissingImage(this)">
+                            <ul>
+                                <li>高温时段遮阴降温，避免花卉暴晒</li>
+                                <li>早晚浇水，保持土壤湿润，防止干旱</li>
+                                <li>薄肥勤施，避免浓肥烧根</li>
+                                <li>加强通风，防治白粉病、炭疽病</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- 秋季养护 -->
+                    <div class="season-card">
+                        <div class="season-header autumn">
+                            <h4>秋季养护</h4>
+                            <div class="season-icon">🍂</div>
+                        </div>
+                        <div class="season-content">
+                            <img src="images/autumn.jpg" alt="秋季花卉" onerror="handleMissingImage(this)">
+                            <ul>
+                                <li>减少氮肥，增施磷钾肥，促进花芽分化</li>
+                                <li>逐渐减少浇水，增强花卉抗寒能力</li>
+                                <li>及时修剪残花、枯枝，保持植株整洁</li>
+                                <li>9-10月适合播种、扦插繁殖</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- 冬季养护 -->
+                    <div class="season-card">
+                        <div class="season-header winter">
+                            <h4>冬季养护</h4>
+                            <div class="season-icon">❄️</div>
+                        </div>
+                        <div class="season-content">
+                            <img src="images/winter.jpg" alt="冬季花卉" onerror="handleMissingImage(this)">
+                            <ul>
+                                <li>畏寒花卉及时移入室内，保持温度5°C以上</li>
+                                <li>控制浇水，土壤微干即可，避免烂根</li>
+                                <li>冬季休眠期停止施肥，待春季萌芽后恢复</li>
+                                <li>晴天中午开窗通风，保持空气流通</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 养护工具 -->
+            <div id="tools" class="guide-section">
+                <h3>必备养护工具</h3>
+                <p class="section-subtitle">点击工具查看详细使用指南</p>
+                <div class="tools-grid">
+                    <!-- 浇水壶 -->
+                    <div class="tool-item">
+                        <a href="tool-detail-watering.html" class="tool-link">
+                            <div class="tool-icon">💧</div>
+                            <div class="tool-info">
+                                <h4>浇水壶</h4>
+                                <p>带长壶嘴，方便精准浇水，避免溅湿叶片</p>
+                                <span class="tool-detail-link">查看使用指南 →</span>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <!-- 园艺剪刀 -->
+                    <div class="tool-item">
+                        <a href="tool-detail-scissors.html" class="tool-link">
+                            <div class="tool-icon">✂️</div>
+                            <div class="tool-info">
+                                <h4>园艺剪刀</h4>
+                                <p>锋利耐用，用于修剪枝条、残花、枯叶</p>
+                                <span class="tool-detail-link">查看使用指南 →</span>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <!-- 土壤湿度计 -->
+                    <div class="tool-item">
+                        <a href="tool-detail-moisture-meter.html" class="tool-link">
+                            <div class="tool-icon">🌡️</div>
+                            <div class="tool-info">
+                                <h4>土壤湿度计</h4>
+                                <p>精准测量土壤湿度，避免盲目浇水</p>
+                                <span class="tool-detail-link">查看使用指南 →</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 常见问题 -->
+            <div id="faq" class="guide-section">
+                <h3>常见问题解答</h3>
+                <div class="faq-grid" id="faqContainer">
+                    <!-- 问题1 -->
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(0)">
+                            <h4>花卉叶片发黄是什么原因？</h4>
+                            <div class="faq-toggle">+</div>
+                        </div>
+                        <div class="faq-answer">
+                            <p>叶片发黄主要有以下原因：1. 浇水过多或过少，导致根系受损；2. 光照不足或过强，影响光合作用；3. 缺乏养分，尤其是氮、铁元素；4. 土壤酸碱度不适；5. 病虫害侵袭。可根据实际情况调整养护方式。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 问题2 -->
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(1)">
+                            <h4>如何防止花卉烂根？</h4>
+                            <div class="faq-toggle">+</div>
+                        </div>
+                        <div class="faq-answer">
+                            <p>防止烂根的关键：1. 选择排水良好的土壤和带排水孔的花盆；2. 遵循"见干见湿"的浇水原则，避免盆内积水；3. 夏季高温时加强通风，减少土壤湿度；4. 定期松土，增加土壤透气性；5. 施肥时避免浓肥直接接触根系。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 问题3 -->
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(2)">
+                            <h4>多久给花卉施肥一次？</h4>
+                            <div class="faq-toggle">+</div>
+                        </div>
+                        <div class="faq-answer">
+                            <p>施肥频率：1. 生长季（春夏季）每2-3周施肥一次；2. 休眠期（冬季）停止施肥；3. 开花前增施磷钾肥，促进花芽分化；4. 观叶植物以氮肥为主，观花植物以磷钾肥为主；5. 新买的花卉适应环境后再施肥。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 问题4 -->
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(3)">
+                            <h4>如何判断花卉是否需要浇水？</h4>
+                            <div class="faq-toggle">+</div>
+                        </div>
+                        <div class="faq-answer">
+                            <p>判断方法：1. 手指插入土壤2-3厘米，感觉干燥再浇水；2. 观察叶片，轻微萎蔫表示需要浇水；3. 掂花盆重量，明显变轻表示缺水；4. 使用土壤湿度计测量；5. 不同花卉需水不同，多肉植物需干透再浇，蕨类植物需保持湿润。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="copyright">© 2025 花卉百科 版权所有</div>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-weixin"></i> 微信</a>
+                <a href="#"><i class="fab fa-weibo"></i> 微博</a>
+                <a href="#"><i class="fab fa-tiktok"></i> 抖音</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // 图片错误处理函数
+        function handleMissingImage(img) {
+            const altText = img.alt || '花卉图片';
+            const placeholderColors = {
+                '光照管理': 'fdcb6e',
+                '浇水技巧': '74b9ff',
+                '土壤选择': '00b894',
+                '春季花卉': '55efc4',
+                '夏季花卉': '74b9ff',
+                '秋季花卉': 'e17055',
+                '冬季花卉': 'a29bfe'
+            };
+            const color = placeholderColors[altText] || '2d5016';
+            
+            // 使用本地SVG占位图
+            const svg = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="600" height="400">
+                    <rect width="100%" height="100%" fill="#${color}"/>
+                    <text x="50%" y="50%" text-anchor="middle" dy=".3em" 
+                          fill="white" font-family="Arial, sans-serif" font-size="24">
+                        ${altText}
+                    </text>
+                </svg>
+            `;
+            img.src = 'data:image/svg+xml;base64,' + btoa(svg);
+        }
+        
+        // 更新购物车数量
+        function updateCartCount() {
+            const cartCountElement = document.getElementById('cartCount');
+            if (cartCountElement) {
+                try {
+                    const savedCart = localStorage.getItem('flowerCart');
+                    if (savedCart) {
+                        const cartItems = JSON.parse(savedCart);
+                        const count = cartItems.reduce((total, item) => total + item.quantity, 0);
+                        cartCountElement.textContent = count;
+                        cartCountElement.style.display = count > 0 ? 'flex' : 'none';
+                    } else {
+                        cartCountElement.style.display = 'none';
+                    }
+                } catch (e) {
+                    cartCountElement.style.display = 'none';
+                }
+            }
+        }
+        
+        // FAQ切换函数 - 修复版
+        function toggleFaq(index) {
+            const faqItems = document.querySelectorAll('.faq-item');
+            const faqToggles = document.querySelectorAll('.faq-toggle');
+            const faqAnswers = document.querySelectorAll('.faq-answer');
+            
+            // 检查当前点击的FAQ是否已经打开
+            const isCurrentlyActive = faqItems[index].classList.contains('active');
+            
+            // 关闭所有FAQ
+            faqItems.forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // 更新所有toggle符号
+            faqToggles.forEach(toggle => {
+                toggle.textContent = '+';
+            });
+            
+            // 隐藏所有答案
+            faqAnswers.forEach(answer => {
+                answer.style.display = 'none';
+            });
+            
+            // 如果当前点击的FAQ原本是关闭状态，则打开它
+            if (!isCurrentlyActive) {
+                faqItems[index].classList.add('active');
+                faqToggles[index].textContent = '−';
+                faqAnswers[index].style.display = 'block';
+            }
+        }
+        
+        // 平滑滚动到锚点
+        function scrollToAnchor(event) {
+            const href = this.getAttribute('href');
+            if (href.startsWith('#')) {
+                event.preventDefault();
+                const targetId = href.substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        }
+        
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            // 处理缺失的图片
+            const images = document.querySelectorAll('img');
+            images.forEach(img => {
+                if (!img.complete || img.naturalHeight === 0) {
+                    handleMissingImage(img);
+                }
+                img.addEventListener('error', function() {
+                    handleMissingImage(this);
+                });
+            });
+            
+            // 更新购物车数量
+            updateCartCount();
+            
+            // 监听购物车变化
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'flowerCart') {
+                    updateCartCount();
+                }
+            });
+            
+            // 为快速导航添加平滑滚动
+            const navLinks = document.querySelectorAll('.nav-card');
+            navLinks.forEach(link => {
+                link.addEventListener('click', scrollToAnchor);
+            });
+            
+            // 初始化FAQ，确保所有答案都隐藏
+            const faqAnswers = document.querySelectorAll('.faq-answer');
+            faqAnswers.forEach(answer => {
+                answer.style.display = 'none';
+            });
+            
+            // 为FAQ问题添加点击事件（备用方案）
+            document.querySelectorAll('.faq-question').forEach((question, index) => {
+                question.addEventListener('click', function(e) {
+                    // 防止事件冒泡问题
+                    if (e.target !== this && !this.contains(e.target)) {
+                        return;
+                    }
+                    toggleFaq(index);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
