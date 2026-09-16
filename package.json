@@ -1,0 +1,1 @@
+{"name":"flower-website","version":"1.0.0","description":"Flower Website","main":"app.js","scripts":{"start":"node app.js","dev":"node app.js"},"dependencies":{"body-parser":"^2.2.0","express":"^5.1.0","mssql":"^12.1.0"},"engines":{"node":">=18.0.0"}}
