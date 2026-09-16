@@ -4,8 +4,7 @@
 
 
 
-> 在线预览：[https://你的用户名.github.io/flower-shop/Public/index.html](https://QccJ12123.github.io/flower-shop/Public/index.html
-)
+> 在线预览：(https://QccJ12123.github.io/flower-shop/Public/index.html)
 
 > PC 端 / 移动端均已适配
 
